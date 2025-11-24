@@ -1,38 +1,190 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import hero1 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.27_a4e2d871-removebg-preview.png';
+import hero2 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.40_5518b0eb-removebg-preview.png';
+import hero3 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.49_861ff2fa-removebg-preview.png';
+import hero4 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.57_2a0b9290-removebg-preview.png';
+import hero5 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.57_a3213822-removebg-preview.png';
+// Images: local imports (hero1) and external URLs are both supported
+const images = [
+  hero1,
+  hero2,
+  hero3,
+  hero4,
+  hero5,
+];
 
 export default function Hero() {
-  return (
-    <section className="relative w-full min-h-screen md:h-screen overflow-hidden" id="products">
-      {/* Blue pottery background image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: 'url(/placeholder.svg?height=1080&width=1920&query=traditional blue pottery multan background texture)',
-        }}
-      />
-      
-      <div className="absolute inset-0 bg-blue/30" />
+  const [currentImg, setCurrentImg] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-      {/* Content */}
-      <div className="relative w-full min-h-screen md:h-screen flex items-center justify-start">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl mx-auto sm:mx-0">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif font-bold text-cream mb-4 sm:mb-6 leading-tight text-balance">
-              Blue Pottery of Multan: A Timeless Heritage for Modern Homes
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-cream/90 mb-6 sm:mb-8 leading-relaxed max-w-xl">
-              Made for Everyday Use. Crafted with Care. Experience Authentic Blue Pottery Crockery
-            </p>
-            <Link href="/#products">
-              <button className="bg-caramel text-white px-6 sm:px-8 py-3 sm:py-4 font-medium hover:bg-caramel/90 transition rounded-lg shadow-lg text-sm sm:text-base">
-                Shop Now
-              </button>
-            </Link>
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentImg((prev) => (prev + 1) % images.length);
+      }, 400);
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 800);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleDotClick = (idx) => {
+    if (idx !== currentImg && !isAnimating) {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentImg(idx);
+      }, 400);
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 800);
+    }
+  };
+
+  return (
+    <section className="relative w-full min-h-screen flex flex-col lg:flex-row items-center justify-between bg-gradient-to-br from-slate-900 via-blue-900 to-blue-800 px-6 lg:px-20 py-16 overflow-hidden">
+      
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-400 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Left Text Content */}
+      <div className="lg:w-1/2 text-left relative z-10 space-y-6">
+        <div className="inline-block px-4 py-2 bg-blue-400/20 rounded-full backdrop-blur-sm border border-blue-300/30 mb-4">
+          <span className="text-blue-200 text-sm font-medium tracking-wide">HANDCRAFTED EXCELLENCE</span>
+        </div>
+        
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-white">
+          Discover the{' '}
+          <span className="bg-gradient-to-r from-blue-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+            Art of Blue Pottery
+          </span>
+        </h1>
+        
+        <p className="text-lg sm:text-xl text-blue-100/90 max-w-xl leading-relaxed">
+          Crafted with love, preserving tradition in every piece. Bring timeless artistry into your home.
+        </p>
+        
+        <div className="flex flex-wrap gap-4 pt-4">
+          <button className="group bg-gradient-to-r from-blue-400 to-cyan-400 text-slate-900 px-8 py-4 font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+            Explore Collection
+            <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+          </button>
+        </div>
+
+        {/* Stats or features */}
+        <div className="flex gap-8 pt-8">
+          <div>
+            <div className="text-3xl font-bold text-blue-300">5000+</div>
+            <div className="text-sm text-blue-200/70">Unique Designs</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-blue-300">100%</div>
+            <div className="text-sm text-blue-200/70">Handcrafted</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-blue-300">1000+</div>
+            <div className="text-sm text-blue-200/70">Customer Memories</div>
           </div>
         </div>
       </div>
+
+      {/* Right Image Container with Swap Effect */}
+      <div className="lg:w-1/2 mt-10 lg:mt-0 flex flex-col justify-center items-center relative">
+        
+        {/* Decorative rings */}
+        <div className="absolute w-[420px] h-[420px] border-2 border-blue-400/20 rounded-full animate-pulse"></div>
+        <div className="absolute w-[460px] h-[460px] border border-blue-400/10 rounded-full"></div>
+        
+        {/* Main image container with perspective */}
+        <div className="relative w-80 h-80 lg:w-96 lg:h-96" style={{ perspective: '1000px' }}>
+          <div
+            className={`w-full h-full relative rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm bg-white/5 border border-white/10 transition-all duration-700 ${
+              isAnimating ? 'animate-swap-out' : 'animate-swap-in'
+            }`}
+            style={{
+              transformStyle: 'preserve-3d',
+            }}
+          >
+            <img
+              src={
+                typeof images[currentImg] === 'string'
+                  ? images[currentImg]
+                  : encodeURI((images[currentImg] as any).src)
+              }
+              alt={`Blue Pottery ${currentImg + 1}`}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 to-transparent"></div>
+          </div>
+        </div>
+
+        {/* Navigation dots with improved design */}
+        <div className="flex mt-8 space-x-3 bg-white/10 backdrop-blur-md px-6 py-3 rounded-full border border-white/20">
+          {images.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleDotClick(idx)}
+              className={`transition-all duration-300 rounded-full ${
+                idx === currentImg 
+                  ? 'w-8 h-3 bg-gradient-to-r from-blue-400 to-cyan-400' 
+                  : 'w-3 h-3 bg-white/40 hover:bg-white/60'
+              }`}
+              aria-label={`View image ${idx + 1}`}
+            ></button>
+          ))}
+        </div>
+
+        {/* Image counter */}
+        <div className="mt-4 text-blue-200/70 text-sm font-medium">
+          {currentImg + 1} / {images.length}
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes swap-out {
+          0% {
+            transform: rotateY(0deg) scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: rotateY(90deg) scale(0.8);
+            opacity: 0;
+          }
+          100% {
+            transform: rotateY(90deg) scale(0.8);
+            opacity: 0;
+          }
+        }
+
+        @keyframes swap-in {
+          0% {
+            transform: rotateY(-90deg) scale(0.8);
+            opacity: 0;
+          }
+          50% {
+            transform: rotateY(-90deg) scale(0.8);
+            opacity: 0;
+          }
+          100% {
+            transform: rotateY(0deg) scale(1);
+            opacity: 1;
+          }
+        }
+
+        .animate-swap-out {
+          animation: swap-out 0.8s ease-in-out;
+        }
+
+        .animate-swap-in {
+          animation: swap-in 0.8s ease-in-out;
+        }
+      `}</style>
     </section>
   );
 }
