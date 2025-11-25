@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import hero1 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.27_a4e2d871-removebg-preview.png';
-import hero2 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.40_5518b0eb-removebg-preview.png';
-import hero3 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.49_861ff2fa-removebg-preview.png';
-import hero4 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.57_2a0b9290-removebg-preview.png';
-import hero5 from '@/assets/images/WhatsApp_Image_2025-11-15_at_15.53.57_a3213822-removebg-preview.png';
+import hero1 from '@/assets/images/serving-plate.png';
+import hero2 from '@/assets/images/flower-decor.png';
+import hero3 from '@/assets/images/tea-pot (6).png';
+import hero4 from '@/assets/images/hot-pot.png';
+import hero5 from '@/assets/images/hot-karhai.png';
 // Images: local imports (hero1) and external URLs are both supported
 const images = [
   hero1,
@@ -46,7 +46,7 @@ export default function Hero() {
 
   return (
     <section className="relative w-full min-h-screen flex flex-col lg:flex-row items-center justify-between bg-gradient-to-br from-slate-900 via-blue-900 to-blue-800 px-6 lg:px-20 py-16 overflow-hidden">
-      
+
       {/* Decorative background elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full blur-3xl"></div>
@@ -58,18 +58,18 @@ export default function Hero() {
         <div className="inline-block px-4 py-2 bg-blue-400/20 rounded-full backdrop-blur-sm border border-blue-300/30 mb-4">
           <span className="text-blue-200 text-sm font-medium tracking-wide">HANDCRAFTED EXCELLENCE</span>
         </div>
-        
+
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-white">
           Discover the{' '}
           <span className="bg-gradient-to-r from-blue-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
             Art of Blue Pottery
           </span>
         </h1>
-        
+
         <p className="text-lg sm:text-xl text-blue-100/90 max-w-xl leading-relaxed">
           Crafted with love, preserving tradition in every piece. Bring timeless artistry into your home.
         </p>
-        
+
         <div className="flex flex-wrap gap-4 pt-4">
           <button className="group bg-gradient-to-r from-blue-400 to-cyan-400 text-slate-900 px-8 py-4 font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
             Explore Collection
@@ -96,17 +96,16 @@ export default function Hero() {
 
       {/* Right Image Container with Swap Effect */}
       <div className="lg:w-1/2 mt-10 lg:mt-0 flex flex-col justify-center items-center relative">
-        
+
         {/* Decorative rings */}
         <div className="absolute w-[420px] h-[420px] border-2 border-blue-400/20 rounded-full animate-pulse"></div>
         <div className="absolute w-[460px] h-[460px] border border-blue-400/10 rounded-full"></div>
-        
+
         {/* Main image container with perspective */}
         <div className="relative w-80 h-80 lg:w-96 lg:h-96" style={{ perspective: '1000px' }}>
           <div
-            className={`w-full h-full relative rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm bg-white/5 border border-white/10 transition-all duration-700 ${
-              isAnimating ? 'animate-swap-out' : 'animate-swap-in'
-            }`}
+            className={`w-full h-full relative rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm bg-white/5 border border-white/10 transition-all duration-700 ${isAnimating ? 'animate-swap-out' : 'animate-swap-in'
+              }`}
             style={{
               transformStyle: 'preserve-3d',
             }}
@@ -130,20 +129,16 @@ export default function Hero() {
             <button
               key={idx}
               onClick={() => handleDotClick(idx)}
-              className={`transition-all duration-300 rounded-full ${
-                idx === currentImg 
-                  ? 'w-8 h-3 bg-gradient-to-r from-blue-400 to-cyan-400' 
-                  : 'w-3 h-3 bg-white/40 hover:bg-white/60'
-              }`}
+              className={`transition-all duration-300 rounded-full ${idx === currentImg
+                ? 'w-8 h-3 bg-gradient-to-r from-blue-400 to-cyan-400'
+                : 'w-3 h-3 bg-white/40 hover:bg-white/60'
+                }`}
               aria-label={`View image ${idx + 1}`}
             ></button>
           ))}
         </div>
 
-        {/* Image counter */}
-        <div className="mt-4 text-blue-200/70 text-sm font-medium">
-          {currentImg + 1} / {images.length}
-        </div>
+        {/* Image counter removed as requested */}
       </div>
 
       <style jsx>{`
