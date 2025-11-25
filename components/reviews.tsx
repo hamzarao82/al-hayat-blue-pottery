@@ -65,7 +65,7 @@ const initialReviews: Review[] = [
     id: 7,
     name: 'Sana Butt',
     rating: 5,
-    text: 'Each piece is a work of art. I love supporting local artisans and Arraish makes it so easy. Absolutely love my purchase!',
+    text: 'Each piece is a work of art. I love supporting local artisans and Al Hayat Blue Pottery makes it so easy. Absolutely love my purchase!',
     product: 'Fruit Bowl',
     image: 'https://i.pravatar.cc/150?img=10',
   },
@@ -125,7 +125,7 @@ export default function Reviews() {
   const duplicatedReviews = [...reviews, ...reviews, ...reviews, ...reviews];
 
   return (
-    <section className="bg-gradient-to-b from-orange-50 to-orange-100/30 py-16 sm:py-24 overflow-hidden">
+    <section className="bg-white py-16 sm:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-start mb-12">
           <div>
@@ -133,12 +133,12 @@ export default function Reviews() {
               Customer Reviews
             </h2>
             <p className="text-lg text-blue-700/70 max-w-2xl">
-              Hear from our delighted customers about their experience with Arraish pottery
+              Hear from our delighted customers about their experience with Al Hayat Blue Pottery
             </p>
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition shadow-md"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-400 to-cyan-400 text-slate-900 px-6 py-3 rounded-lg hover:bg-orange-700 transition shadow-md"
           >
             <Plus size={20} />
             Add Review
@@ -150,7 +150,7 @@ export default function Reviews() {
             {duplicatedReviews.map((review, index) => (
               <div
                 key={`${review.id}-${index}`}
-                className="bg-white rounded-xl p-6 shadow-md flex-shrink-0 w-[400px]"
+                className="bg-cream rounded-xl p-6 shadow-md flex-shrink-0 w-[400px]"
               >
                 <div className="flex gap-1 mb-3">
                   {[...Array(5)].map((_, i) => (
@@ -254,7 +254,7 @@ export default function Reviews() {
 
               <button
                 onClick={handleSubmit}
-                className="w-full bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 transition font-medium"
+                className="w-full bg-gradient-to-r from-blue-400 to-cyan-400 text-slate-900 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
               >
                 Submit Review
               </button>

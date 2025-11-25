@@ -181,12 +181,12 @@ export default function Header() {
 
             {/* CENTER — LOGO */}
             <div className="flex-grow text-center ml-0 -ml-4 sm:-ml-20 md:-ml-40 lg:-ml-52 xl:-ml-60 mb-1">
-              <Link href="/">
+              <Link href="/" className="flex items-center">
                 <Image
                   src={logo}
                   alt="Al Hayat Blue Pottery"
-                  height={30}
-                  width={180}
+                  height={50}
+                  width={140}
                   className="mx-auto max-w-[140px] sm:max-w-[160px] md:max-w-[180px]"
                 />
               </Link>

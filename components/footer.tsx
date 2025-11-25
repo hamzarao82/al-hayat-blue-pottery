@@ -1,8 +1,9 @@
 'use client';
+import { FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
 
 export default function Footer() {
   return (
-    <footer className="bg-blue text-cream">
+    <footer className="bg-gradient-to-br from-slate-900 via-blue-900 to-blue-800 text-cream">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
@@ -31,9 +32,9 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Connect</h4>
             <ul className="space-y-2 text-sm text-cream/70">
-              <li><a href="#" className="hover:text-cream transition">Instagram</a></li>
-              <li><a href="#" className="hover:text-cream transition">Facebook</a></li>
-              <li><a href="#" className="hover:text-cream transition">WhatsApp</a></li>
+              <li className="flex items-center gap-2"><FaInstagram /><a href="https://www.instagram.com/alhayatbluepottery/" className="hover:text-cream transition">Instagram</a></li>
+              <li className="flex items-center gap-2"><FaFacebook /><a href="https://www.facebook.com/share/17DER9uZJd/" className="hover:text-cream transition">Facebook</a></li>
+              <li className="flex items-center gap-2"><FaWhatsapp /><a href="https://wa.me/03126331041" className="hover:text-cream transition">WhatsApp</a></li>
             </ul>
           </div>
         </div>
