@@ -1,8 +1,10 @@
 'use client';
 
-import { X, ChevronLeft, ChevronRight, ShoppingCart, Heart, Share2, Star, Truck, Shield, Package } from 'lucide-react';
-import { useState } from 'react';
+import { X, ChevronLeft, ChevronRight, ShoppingCart, Heart, Share2, Star, Truck, Shield, Package, Link2, Mail } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
+import { FaWhatsapp, FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaPinterestP } from 'react-icons/fa';
 
 interface Product {
     id: number;
@@ -24,9 +26,16 @@ interface QuickViewModalProps {
 }
 
 export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }: QuickViewModalProps) {
+    const [mounted, setMounted] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [isWishlisted, setIsWishlisted] = useState(false);
+    const [showShareMenu, setShowShareMenu] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
 
     const discountedPrice = Math.round(product.price * (1 - product.discount / 100));
     const images = product.images || [product.image, product.image, product.image];
@@ -43,21 +52,71 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
         if (onAddToCart) {
             onAddToCart();
         }
-        // Could show a success message here
     };
 
-    if (!isOpen) return null;
+    const productUrl = typeof window !== 'undefined' ? `${window.location.origin}/products/${product.id}` : '';
+    const shareText = `Check out ${product.name} - Rs ${discountedPrice.toLocaleString()}!`;
 
-    return (
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(productUrl);
+        alert('Link copied to clipboard!');
+        setShowShareMenu(false);
+    };
+
+    const handleShareWhatsApp = () => {
+        const url = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + productUrl)}`;
+        window.open(url, '_blank');
+        setShowShareMenu(false);
+    };
+
+    const handleShareFacebook = () => {
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}`;
+        window.open(url, '_blank', 'width=600,height=400');
+        setShowShareMenu(false);
+    };
+
+    const handleShareInstagram = () => {
+        alert('To share on Instagram, please take a screenshot and post it to your story or feed!');
+        setShowShareMenu(false);
+    };
+
+    const handleShareTwitter = () => {
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(productUrl)}`;
+        window.open(url, '_blank', 'width=600,height=400');
+        setShowShareMenu(false);
+    };
+
+    const handleShareLinkedIn = () => {
+        const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(productUrl)}`;
+        window.open(url, '_blank', 'width=600,height=400');
+        setShowShareMenu(false);
+    };
+
+    const handleSharePinterest = () => {
+        const url = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(productUrl)}&media=${encodeURIComponent(product.image)}&description=${encodeURIComponent(shareText)}`;
+        window.open(url, '_blank', 'width=600,height=400');
+        setShowShareMenu(false);
+    };
+
+    const handleShareEmail = () => {
+        const subject = encodeURIComponent(product.name);
+        const body = encodeURIComponent(`${shareText}\n\n${productUrl}`);
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        setShowShareMenu(false);
+    };
+
+    if (!isOpen || !mounted) return null;
+
+    return createPortal(
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-fadeIn"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] animate-fadeIn"
                 onClick={onClose}
             ></div>
 
             {/* Modal */}
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none">
                 <div
                     className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden pointer-events-auto animate-slideUp"
                     onClick={(e) => e.stopPropagation()}
@@ -115,8 +174,8 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
                                             key={idx}
                                             onClick={() => setCurrentImageIndex(idx)}
                                             className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${idx === currentImageIndex
-                                                    ? 'border-blue-600 scale-105'
-                                                    : 'border-gray-200 hover:border-gray-300'
+                                                ? 'border-blue-600 scale-105'
+                                                : 'border-gray-200 hover:border-gray-300'
                                                 }`}
                                         >
                                             <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" />
@@ -224,15 +283,101 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
                                 <button
                                     onClick={() => setIsWishlisted(!isWishlisted)}
                                     className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 ${isWishlisted
-                                            ? 'bg-red-50 border-red-500 text-red-500'
-                                            : 'border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500'
+                                        ? 'bg-red-50 border-red-500 text-red-500'
+                                        : 'border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500'
                                         }`}
                                 >
                                     <Heart size={20} className={isWishlisted ? 'fill-current' : ''} />
                                 </button>
-                                <button className="p-4 rounded-xl border-2 border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:scale-105">
-                                    <Share2 size={20} />
-                                </button>
+
+                                {/* Share Button with Dropdown - Opens Upward */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowShareMenu(!showShareMenu)}
+                                        className="p-4 rounded-xl border-2 border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:scale-105"
+                                    >
+                                        <Share2 size={20} />
+                                    </button>
+
+                                    {/* Share Menu Dropdown - Opens Upward and to the Left */}
+                                    {showShareMenu && (
+                                        <>
+                                            <div
+                                                className="fixed inset-0 z-10"
+                                                onClick={() => setShowShareMenu(false)}
+                                            ></div>
+                                            <div className="absolute right-0 bottom-full mb-2 bg-white rounded-2xl shadow-2xl border border-gray-200 py-3 w-64 z-20 animate-slideUpMenu">
+                                                {/* Main Share Options */}
+                                                <button
+                                                    onClick={handleCopyLink}
+                                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-700"
+                                                >
+                                                    <Link2 size={18} className="text-gray-600" />
+                                                    <span className="font-medium">Copy Link</span>
+                                                </button>
+                                                <button
+                                                    onClick={handleShareWhatsApp}
+                                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-700"
+                                                >
+                                                    <FaWhatsapp size={18} className="text-green-600" />
+                                                    <span className="font-medium">Share to WhatsApp</span>
+                                                </button>
+                                                <button
+                                                    onClick={handleShareFacebook}
+                                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-700"
+                                                >
+                                                    <FaFacebookF size={18} className="text-blue-600" />
+                                                    <span className="font-medium">Share to Facebook</span>
+                                                </button>
+                                                <button
+                                                    onClick={handleShareInstagram}
+                                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-700"
+                                                >
+                                                    <FaInstagram size={18} className="text-pink-600" />
+                                                    <span className="font-medium">Share to Instagram</span>
+                                                </button>
+
+                                                {/* Divider */}
+                                                <div className="my-2 border-t border-gray-200"></div>
+
+                                                {/* Social Media Icons */}
+                                                <div className="px-4 py-2">
+                                                    <p className="text-xs text-gray-500 mb-3 font-medium">More Options</p>
+                                                    <div className="flex items-center gap-3">
+                                                        <button
+                                                            onClick={handleShareTwitter}
+                                                            className="p-2.5 rounded-lg hover:bg-blue-50 transition-colors group"
+                                                            title="Share on Twitter"
+                                                        >
+                                                            <FaTwitter size={20} className="text-gray-600 group-hover:text-blue-500" />
+                                                        </button>
+                                                        <button
+                                                            onClick={handleShareLinkedIn}
+                                                            className="p-2.5 rounded-lg hover:bg-blue-50 transition-colors group"
+                                                            title="Share on LinkedIn"
+                                                        >
+                                                            <FaLinkedinIn size={20} className="text-gray-600 group-hover:text-blue-700" />
+                                                        </button>
+                                                        <button
+                                                            onClick={handleSharePinterest}
+                                                            className="p-2.5 rounded-lg hover:bg-red-50 transition-colors group"
+                                                            title="Share on Pinterest"
+                                                        >
+                                                            <FaPinterestP size={20} className="text-gray-600 group-hover:text-red-600" />
+                                                        </button>
+                                                        <button
+                                                            onClick={handleShareEmail}
+                                                            className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors group"
+                                                            title="Share via Email"
+                                                        >
+                                                            <Mail size={20} className="text-gray-600 group-hover:text-gray-800" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             </div>
 
                             {/* View Full Details Link */}
@@ -263,6 +408,17 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
             transform: translateY(0) scale(1);
           }
         }
+
+        @keyframes slideUpMenu {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
         
         .animate-fadeIn {
           animation: fadeIn 0.2s ease-out;
@@ -271,7 +427,13 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
         .animate-slideUp {
           animation: slideUp 0.3s ease-out;
         }
+
+        .animate-slideUpMenu {
+          animation: slideUpMenu 0.2s ease-out;
+        }
       `}</style>
-        </>
+        </>,
+        document.body
     );
 }
+

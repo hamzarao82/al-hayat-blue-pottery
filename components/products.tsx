@@ -11,135 +11,65 @@ interface Product {
   price: number;
   discount: number;
   image: string;
-  category: string;
 }
 
-const products: Product[] = [
-  // Tableware
-  {
-    id: 1,
-    name: 'Ceramic Tea Set',
-    price: 2499,
-    discount: 28,
-    image: '/blue-pottery-tea-set.jpg',
-    category: 'tableware'
-  },
-  {
-    id: 2,
-    name: 'Handcrafted Plates',
-    price: 1299,
-    discount: 31,
-    image: '/blue-ceramic-plates-set.jpg',
-    category: 'tableware'
-  },
-  {
-    id: 3,
-    name: 'Serving Platter',
-    price: 1599,
-    discount: 31,
-    image: '/traditional-blue-pottery-platter.jpg',
-    category: 'tableware'
-  },
-  {
-    id: 4,
-    name: 'Dinner Set',
-    price: 3499,
-    discount: 29,
-    image: '/complete-blue-pottery-dinner-set.jpg',
-    category: 'tableware'
-  },
-  {
-    id: 5,
-    name: 'Coffee Mugs',
-    price: 899,
-    discount: 34,
-    image: '/blue-ceramic-coffee-mugs.jpg',
-    category: 'tableware'
-  },
+interface CategoryRow {
+  id: string;
+  title: string;
+  subtitle: string;
+  products: Product[];
+}
 
-  // Decor
+// Data organized by rows (categories) for easy management
+const productCategories: CategoryRow[] = [
   {
-    id: 6,
-    name: 'Decorative Bowls',
-    price: 1899,
-    discount: 32,
-    image: '/blue-pottery-bowls-collection.jpg',
-    category: 'decor'
+    id: 'tableware',
+    title: 'Tableware Collection',
+    subtitle: 'Elegant pieces for your dining experience',
+    products: [
+      { id: 1, name: 'Ceramic Tea Set', price: 2499, discount: 28, image: '/blue-pottery-tea-set.jpg' },
+      { id: 2, name: 'Handcrafted Plates', price: 1299, discount: 31, image: '/blue-ceramic-plates-set.jpg' },
+      { id: 3, name: 'Serving Platter', price: 1599, discount: 31, image: '/traditional-blue-pottery-platter.jpg' },
+      { id: 4, name: 'Dinner Set', price: 3499, discount: 29, image: '/complete-blue-pottery-dinner-set.jpg' },
+      { id: 5, name: 'Coffee Mugs', price: 899, discount: 34, image: '/blue-ceramic-coffee-mugs.jpg' },
+      // Add more products to Tableware here
+    ]
   },
   {
-    id: 7,
-    name: 'Ceramic Vase',
-    price: 1799,
-    discount: 25,
-    image: '/blue-pottery-tea-set.jpg',
-    category: 'decor'
+    id: 'decor',
+    title: 'Decorative Items',
+    subtitle: 'Beautiful accents for your home',
+    products: [
+      { id: 6, name: 'Decorative Bowls', price: 1899, discount: 32, image: '/blue-pottery-bowls-collection.jpg' },
+      { id: 7, name: 'Ceramic Vase', price: 1799, discount: 25, image: '/blue-pottery-tea-set.jpg' },
+      { id: 8, name: 'Wall Hanging', price: 2299, discount: 20, image: '/blue-ceramic-plates-set.jpg' },
+      { id: 9, name: 'Table Centerpiece', price: 1999, discount: 30, image: '/blue-pottery-bowls-collection.jpg' },
+      { id: 10, name: 'Decorative Planter', price: 1499, discount: 28, image: '/traditional-blue-pottery-platter.jpg' },
+      // Add more products to Decor here
+    ]
   },
   {
-    id: 8,
-    name: 'Wall Hanging',
-    price: 2299,
-    discount: 20,
-    image: '/blue-ceramic-plates-set.jpg',
-    category: 'decor'
+    id: 'new-arrivals',
+    title: 'New Arrivals',
+    subtitle: 'Fresh designs just added',
+    products: [
+      { id: 11, name: 'Premium Tea Set', price: 3299, discount: 35, image: '/blue-ceramic-coffee-mugs.jpg' },
+      { id: 12, name: 'Artisan Bowl Set', price: 2199, discount: 30, image: '/complete-blue-pottery-dinner-set.jpg' },
+      { id: 13, name: 'Designer Plates', price: 1699, discount: 33, image: '/blue-pottery-tea-set.jpg' },
+      { id: 14, name: 'Luxury Serving Set', price: 2899, discount: 27, image: '/blue-ceramic-plates-set.jpg' },
+      { id: 15, name: 'Modern Vase', price: 1899, discount: 32, image: '/blue-pottery-bowls-collection.jpg' },
+      // Add more products to New Arrivals here
+    ]
   },
+  // You can easily add a new row here:
+  /*
   {
-    id: 9,
-    name: 'Table Centerpiece',
-    price: 1999,
-    discount: 30,
-    image: '/blue-pottery-bowls-collection.jpg',
-    category: 'decor'
-  },
-  {
-    id: 10,
-    name: 'Decorative Planter',
-    price: 1499,
-    discount: 28,
-    image: '/traditional-blue-pottery-platter.jpg',
-    category: 'decor'
-  },
-
-  // New Arrivals
-  {
-    id: 11,
-    name: 'Premium Tea Set',
-    price: 3299,
-    discount: 35,
-    image: '/blue-ceramic-coffee-mugs.jpg',
-    category: 'new'
-  },
-  {
-    id: 12,
-    name: 'Artisan Bowl Set',
-    price: 2199,
-    discount: 30,
-    image: '/complete-blue-pottery-dinner-set.jpg',
-    category: 'new'
-  },
-  {
-    id: 13,
-    name: 'Designer Plates',
-    price: 1699,
-    discount: 33,
-    image: '/blue-pottery-tea-set.jpg',
-    category: 'new'
-  },
-  {
-    id: 14,
-    name: 'Luxury Serving Set',
-    price: 2899,
-    discount: 27,
-    image: '/blue-ceramic-plates-set.jpg',
-    category: 'new'
-  },
-  {
-    id: 15,
-    name: 'Modern Vase',
-    price: 1899,
-    discount: 32,
-    image: '/blue-pottery-bowls-collection.jpg',
-    category: 'new'
-  },
+    id: 'best-sellers',
+    title: 'Best Sellers',
+    subtitle: 'Our most loved products',
+    products: [ ... ]
+  }
+  */
 ];
 
 export default function Products() {
@@ -157,24 +87,6 @@ export default function Products() {
     }, 3000);
   };
 
-  const categories = [
-    {
-      title: 'Tableware Collection',
-      subtitle: 'Elegant pieces for your dining experience',
-      products: products.filter(p => p.category === 'tableware')
-    },
-    {
-      title: 'Decorative Items',
-      subtitle: 'Beautiful accents for your home',
-      products: products.filter(p => p.category === 'decor')
-    },
-    {
-      title: 'New Arrivals',
-      subtitle: 'Fresh designs just added',
-      products: products.filter(p => p.category === 'new')
-    }
-  ];
-
   return (
     <>
       <section className="bg-gradient-to-b from-cream to-white py-12 sm:py-16">
@@ -190,8 +102,8 @@ export default function Products() {
 
           {/* Category Rows */}
           <div className="space-y-12">
-            {categories.map((category, index) => (
-              <div key={index} className="space-y-4">
+            {productCategories.map((category) => (
+              <div key={category.id} className="space-y-4">
                 {/* Category Header */}
                 <div className="flex items-baseline justify-between">
                   <div>
@@ -206,22 +118,26 @@ export default function Products() {
                 </div>
 
                 {/* Horizontal Scrolling Products */}
-                <div className="relative">
-                  <div className="overflow-x-auto scrollbar-hide pb-4">
-                    <div className="flex gap-6 min-w-max">
-                      {category.products.map((product) => (
-                        <div key={product.id} className="w-72 flex-shrink-0">
-                          <ProductCard
-                            product={product}
-                            onAddToCart={() => handleAddToCart(product)}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                <div className="relative overflow-hidden">
+                  <div className="flex gap-6 animate-scroll-seamless">
+                    {/* Duplicate products 4 times for seamless scrolling (25% shift) */}
+                    {[...Array(4)].map((_, setIndex) => (
+                      <div key={setIndex} className="flex gap-6 shrink-0">
+                        {category.products.map((product) => (
+                          <div key={`${setIndex}-${product.id}`} className="w-72 flex-shrink-0">
+                            <ProductCard
+                              product={product}
+                              onAddToCart={() => handleAddToCart(product)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ))}
                   </div>
 
                   {/* Scroll Gradient Indicators */}
-                  <div className="absolute top-0 right-0 bottom-4 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+                  <div className="absolute top-0 left-0 bottom-4 w-20 bg-gradient-to-r from-cream to-transparent pointer-events-none z-10"></div>
+                  <div className="absolute top-0 right-0 bottom-4 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"></div>
                 </div>
               </div>
             ))}
@@ -232,12 +148,22 @@ export default function Products() {
       {toastData && <Toast product={toastData} />}
 
       <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
+        @keyframes scroll-seamless {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(calc(-100% / 4));
+          }
         }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
+        
+        .animate-scroll-seamless {
+          animation: scroll-seamless 80s linear infinite;
+          width: max-content;
+        }
+        
+        .animate-scroll-seamless:hover {
+          animation-play-state: paused;
         }
       `}</style>
     </>

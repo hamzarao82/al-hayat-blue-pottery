@@ -1,10 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { ShoppingCart, Heart, Share2, Star, Truck, Shield, Package, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ShoppingCart, Heart, Share2, Star, Truck, Shield, Package, ChevronLeft, ChevronRight, Check, Link2, Mail } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import Toast from '@/components/toast';
+import { FaWhatsapp, FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaPinterestP } from 'react-icons/fa';
 
 // Mock product data - In production, fetch from API/database
 const getProductData = (id: string) => {
@@ -75,12 +78,15 @@ const getProductData = (id: string) => {
 };
 
 export default function ProductPage({ params }: { params: { id: string } }) {
+    const router = useRouter();
     const product = getProductData(params.id);
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [selectedTab, setSelectedTab] = useState<'description' | 'specifications' | 'reviews'>('description');
+    const [showShareMenu, setShowShareMenu] = useState(false);
+    const [showToast, setShowToast] = useState(false);
 
     const discountedPrice = Math.round(product.price * (1 - product.discount / 100));
     const savings = product.price - discountedPrice;
@@ -91,6 +97,71 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
     const prevImage = () => {
         setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+    };
+
+    const handleAddToCart = () => {
+        // Add to cart logic here
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+    };
+
+    const handleBuyNow = () => {
+        // Add to cart and redirect to cart page
+        handleAddToCart();
+        setTimeout(() => {
+            router.push('/cart');
+        }, 500);
+    };
+
+    const productUrl = typeof window !== 'undefined' ? `${window.location.origin}/products/${product.id}` : '';
+    const shareText = `Check out ${product.name} - Rs ${discountedPrice.toLocaleString()}!`;
+
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(productUrl);
+        alert('Link copied to clipboard!');
+        setShowShareMenu(false);
+    };
+
+    const handleShareWhatsApp = () => {
+        const url = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + productUrl)}`;
+        window.open(url, '_blank');
+        setShowShareMenu(false);
+    };
+
+    const handleShareFacebook = () => {
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}`;
+        window.open(url, '_blank', 'width=600,height=400');
+        setShowShareMenu(false);
+    };
+
+    const handleShareInstagram = () => {
+        alert('To share on Instagram, please take a screenshot and post it to your story or feed!');
+        setShowShareMenu(false);
+    };
+
+    const handleShareTwitter = () => {
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(productUrl)}`;
+        window.open(url, '_blank', 'width=600,height=400');
+        setShowShareMenu(false);
+    };
+
+    const handleShareLinkedIn = () => {
+        const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(productUrl)}`;
+        window.open(url, '_blank', 'width=600,height=400');
+        setShowShareMenu(false);
+    };
+
+    const handleSharePinterest = () => {
+        const url = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(productUrl)}&media=${encodeURIComponent(product.images[0])}&description=${encodeURIComponent(shareText)}`;
+        window.open(url, '_blank', 'width=600,height=400');
+        setShowShareMenu(false);
+    };
+
+    const handleShareEmail = () => {
+        const subject = encodeURIComponent(product.name);
+        const body = encodeURIComponent(`${shareText}\n\n${productUrl}`);
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        setShowShareMenu(false);
     };
 
     return (
@@ -263,7 +334,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
                             {/* Action Buttons */}
                             <div className="flex gap-4">
-                                <button className="flex-1 py-5 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 hover:scale-105 active:scale-95">
+                                <button
+                                    onClick={handleAddToCart}
+                                    className="flex-1 py-5 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 hover:scale-105 active:scale-95"
+                                >
                                     <ShoppingCart size={24} />
                                     <span>Add to Cart</span>
                                 </button>
@@ -276,13 +350,99 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                                 >
                                     <Heart size={24} className={isWishlisted ? 'fill-current' : ''} />
                                 </button>
-                                <button className="p-5 rounded-2xl border-3 border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:scale-105 shadow-lg">
-                                    <Share2 size={24} />
-                                </button>
+
+                                {/* Share Button with Dropdown - Opens Upward */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowShareMenu(!showShareMenu)}
+                                        className="p-5 rounded-2xl border-3 border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-500 transition-all duration-300 hover:scale-105 shadow-lg"
+                                    >
+                                        <Share2 size={24} />
+                                    </button>
+
+                                    {/* Share Menu Dropdown */}
+                                    {showShareMenu && (
+                                        <>
+                                            <div
+                                                className="fixed inset-0 z-10"
+                                                onClick={() => setShowShareMenu(false)}
+                                            ></div>
+                                            <div className="absolute right-0 bottom-full mb-2 bg-white rounded-2xl shadow-2xl border border-gray-200 py-3 w-64 z-20 animate-slideUpMenu">
+                                                <button
+                                                    onClick={handleCopyLink}
+                                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-700"
+                                                >
+                                                    <Link2 size={18} className="text-gray-600" />
+                                                    <span className="font-medium">Copy Link</span>
+                                                </button>
+                                                <button
+                                                    onClick={handleShareWhatsApp}
+                                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-700"
+                                                >
+                                                    <FaWhatsapp size={18} className="text-green-600" />
+                                                    <span className="font-medium">Share to WhatsApp</span>
+                                                </button>
+                                                <button
+                                                    onClick={handleShareFacebook}
+                                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-700"
+                                                >
+                                                    <FaFacebookF size={18} className="text-blue-600" />
+                                                    <span className="font-medium">Share to Facebook</span>
+                                                </button>
+                                                <button
+                                                    onClick={handleShareInstagram}
+                                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3 text-gray-700"
+                                                >
+                                                    <FaInstagram size={18} className="text-pink-600" />
+                                                    <span className="font-medium">Share to Instagram</span>
+                                                </button>
+
+                                                <div className="my-2 border-t border-gray-200"></div>
+
+                                                <div className="px-4 py-2">
+                                                    <p className="text-xs text-gray-500 mb-3 font-medium">More Options</p>
+                                                    <div className="flex items-center gap-3">
+                                                        <button
+                                                            onClick={handleShareTwitter}
+                                                            className="p-2.5 rounded-lg hover:bg-blue-50 transition-colors group"
+                                                            title="Share on Twitter"
+                                                        >
+                                                            <FaTwitter size={20} className="text-gray-600 group-hover:text-blue-500" />
+                                                        </button>
+                                                        <button
+                                                            onClick={handleShareLinkedIn}
+                                                            className="p-2.5 rounded-lg hover:bg-blue-50 transition-colors group"
+                                                            title="Share on LinkedIn"
+                                                        >
+                                                            <FaLinkedinIn size={20} className="text-gray-600 group-hover:text-blue-700" />
+                                                        </button>
+                                                        <button
+                                                            onClick={handleSharePinterest}
+                                                            className="p-2.5 rounded-lg hover:bg-red-50 transition-colors group"
+                                                            title="Share on Pinterest"
+                                                        >
+                                                            <FaPinterestP size={20} className="text-gray-600 group-hover:text-red-600" />
+                                                        </button>
+                                                        <button
+                                                            onClick={handleShareEmail}
+                                                            className="p-2.5 rounded-lg hover:bg-gray-100 transition-colors group"
+                                                            title="Share via Email"
+                                                        >
+                                                            <Mail size={20} className="text-gray-600 group-hover:text-gray-800" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Buy Now Button */}
-                            <button className="w-full py-5 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95">
+                            <button
+                                onClick={handleBuyNow}
+                                className="w-full py-5 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
+                            >
                                 Buy Now
                             </button>
                         </div>
@@ -407,6 +567,34 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 </div>
             </div>
             <Footer />
+
+            {/* Toast Notification */}
+            {showToast && (
+                <Toast
+                    product={{
+                        name: product.name,
+                        price: discountedPrice,
+                        image: product.images[0]
+                    }}
+                />
+            )}
+
+            <style jsx>{`
+        @keyframes slideUpMenu {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-slideUpMenu {
+          animation: slideUpMenu 0.2s ease-out;
+        }
+      `}</style>
         </>
     );
 }
