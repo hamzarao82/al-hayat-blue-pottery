@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { ShoppingCart, Heart, Share2, Star, Truck, Shield, Package, ChevronLeft, ChevronRight, Check, Link2, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -8,6 +9,8 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import Toast from '@/components/toast';
 import { FaWhatsapp, FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaPinterestP } from 'react-icons/fa';
+
+import ProductCard from '@/components/product-card';
 
 // Mock product data - In production, fetch from API/database
 const getProductData = (id: string) => {
@@ -73,13 +76,20 @@ const getProductData = (id: string) => {
                 verified: true
             }
         ],
-        relatedProducts: [2, 3, 4, 5]
+        relatedProducts: [
+            { id: 2, name: 'Handcrafted Plates', price: 1299, discount: 31, image: '/blue-ceramic-plates-set.jpg' },
+            { id: 3, name: 'Serving Platter', price: 1599, discount: 31, image: '/traditional-blue-pottery-platter.jpg' },
+            { id: 4, name: 'Dinner Set', price: 3499, discount: 29, image: '/complete-blue-pottery-dinner-set.jpg' },
+            { id: 5, name: 'Coffee Mugs', price: 899, discount: 34, image: '/blue-ceramic-coffee-mugs.jpg' },
+            { id: 6, name: 'Decorative Bowls', price: 1899, discount: 32, image: '/blue-pottery-bowls-collection.jpg' },
+        ]
     };
 };
 
-export default function ProductPage({ params }: { params: { id: string } }) {
+export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
     const router = useRouter();
-    const product = getProductData(params.id);
+    const { id } = use(params);
+    const product = getProductData(id);
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
@@ -227,8 +237,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                                         key={idx}
                                         onClick={() => setCurrentImageIndex(idx)}
                                         className={`aspect-square rounded-xl overflow-hidden border-3 transition-all duration-300 ${idx === currentImageIndex
-                                                ? 'border-blue-600 scale-105 shadow-lg'
-                                                : 'border-gray-200 hover:border-gray-400'
+                                            ? 'border-blue-600 scale-105 shadow-lg'
+                                            : 'border-gray-200 hover:border-gray-400'
                                             }`}
                                     >
                                         <img src={img} alt={`View ${idx + 1}`} className="w-full h-full object-cover" />
@@ -344,8 +354,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                                 <button
                                     onClick={() => setIsWishlisted(!isWishlisted)}
                                     className={`p-5 rounded-2xl border-3 transition-all duration-300 hover:scale-105 shadow-lg ${isWishlisted
-                                            ? 'bg-red-50 border-red-500 text-red-500'
-                                            : 'border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500'
+                                        ? 'bg-red-50 border-red-500 text-red-500'
+                                        : 'border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500'
                                         }`}
                                 >
                                     <Heart size={24} className={isWishlisted ? 'fill-current' : ''} />
@@ -457,8 +467,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                                     key={tab}
                                     onClick={() => setSelectedTab(tab)}
                                     className={`px-8 py-4 font-semibold text-lg capitalize transition-all duration-300 relative ${selectedTab === tab
-                                            ? 'text-blue-600'
-                                            : 'text-gray-600 hover:text-blue-600'
+                                        ? 'text-blue-600'
+                                        : 'text-gray-600 hover:text-blue-600'
                                         }`}
                                 >
                                     {tab}
@@ -564,6 +574,29 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                             )}
                         </div>
                     </div>
+
+                    {/* Related Products Section */}
+                    <div className="mt-20 border-t border-gray-200 pt-12">
+                        <h2 className="text-3xl font-serif font-bold text-blue-900 mb-8 text-center">You May Also Like</h2>
+                        <div className="relative overflow-hidden py-4">
+                            <div className="flex gap-6 animate-scroll-seamless">
+                                {/* Duplicate products 4 times for seamless scrolling */}
+                                {[...Array(4)].map((_, setIndex) => (
+                                    <div key={setIndex} className="flex gap-6 shrink-0">
+                                        {product.relatedProducts.map((product) => (
+                                            <div key={`${setIndex}-${product.id}`} className="w-72 flex-shrink-0">
+                                                <ProductCard product={product} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Scroll Gradient Indicators */}
+                            <div className="absolute top-0 left-0 bottom-4 w-20 bg-gradient-to-r from-cream to-transparent pointer-events-none z-10"></div>
+                            <div className="absolute top-0 right-0 bottom-4 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <Footer />
@@ -593,6 +626,24 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
         .animate-slideUpMenu {
           animation: slideUpMenu 0.2s ease-out;
+        }
+
+        @keyframes scroll-seamless {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(calc(-100% / 4));
+          }
+        }
+        
+        .animate-scroll-seamless {
+          animation: scroll-seamless 60s linear infinite;
+          width: max-content;
+        }
+        
+        .animate-scroll-seamless:hover {
+          animation-play-state: paused;
         }
       `}</style>
         </>

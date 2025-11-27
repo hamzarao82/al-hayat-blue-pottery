@@ -118,7 +118,7 @@ export default function Products() {
                 </div>
 
                 {/* Horizontal Scrolling Products */}
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden py-4">
                   <div className="flex gap-6 animate-scroll-seamless">
                     {/* Duplicate products 4 times for seamless scrolling (25% shift) */}
                     {[...Array(4)].map((_, setIndex) => (

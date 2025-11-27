@@ -1,7 +1,8 @@
 'use client';
 
 import { ShoppingCart, Share2, Eye } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import Toast from './toast';
 import QuickViewModal from './quick-view-modal';
@@ -26,6 +27,11 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
   const [quantity, setQuantity] = useState(1);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const discountedPrice = Math.round(product.price * (1 - product.discount / 100));
 
@@ -59,6 +65,16 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
     if (quantity > 1) {
       setQuantity(prev => prev - 1);
     }
+  };
+
+  const handleQuickViewAddToCart = () => {
+    setShowToast(true);
+    if (onAddToCart) {
+      onAddToCart();
+    }
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2000);
   };
 
   return (
@@ -188,17 +204,18 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
         product={product}
         isOpen={showQuickView}
         onClose={() => setShowQuickView(false)}
-        onAddToCart={onAddToCart}
+        onAddToCart={handleQuickViewAddToCart}
       />
 
-      {showToast && (
+      {showToast && mounted && createPortal(
         <Toast
           product={{
             name: product.name,
             price: discountedPrice,
             image: product.image,
           }}
-        />
+        />,
+        document.body
       )}
 
       <style jsx>{`
