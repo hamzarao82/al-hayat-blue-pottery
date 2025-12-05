@@ -1,79 +1,26 @@
 'use client';
 
-import { ShoppingCart } from 'lucide-react';
+/**
+ * Products Section Component
+ * Now integrated with CMS for editable content
+ */
+
 import { useState } from 'react';
 import Toast from '@/components/toast';
 import ProductCard from './product-card';
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  discount: number;
-  image: string;
-}
-
-interface CategoryRow {
-  id: string;
-  title: string;
-  subtitle: string;
-  products: Product[];
-}
-
-// Data organized by rows (categories) for easy management
-const productCategories: CategoryRow[] = [
-  {
-    id: 'tableware',
-    title: 'Tableware Collection',
-    subtitle: 'Elegant pieces for your dining experience',
-    products: [
-      { id: 1, name: 'Ceramic Tea Set', price: 2499, discount: 28, image: '/blue-pottery-tea-set.jpg' },
-      { id: 2, name: 'Handcrafted Plates', price: 1299, discount: 31, image: '/blue-ceramic-plates-set.jpg' },
-      { id: 3, name: 'Serving Platter', price: 1599, discount: 31, image: '/traditional-blue-pottery-platter.jpg' },
-      { id: 4, name: 'Dinner Set', price: 3499, discount: 29, image: '/complete-blue-pottery-dinner-set.jpg' },
-      { id: 5, name: 'Coffee Mugs', price: 899, discount: 34, image: '/blue-ceramic-coffee-mugs.jpg' },
-      // Add more products to Tableware here
-    ]
-  },
-  {
-    id: 'decor',
-    title: 'Decorative Items',
-    subtitle: 'Beautiful accents for your home',
-    products: [
-      { id: 6, name: 'Decorative Bowls', price: 1899, discount: 32, image: '/blue-pottery-bowls-collection.jpg' },
-      { id: 7, name: 'Ceramic Vase', price: 1799, discount: 25, image: '/blue-pottery-tea-set.jpg' },
-      { id: 8, name: 'Wall Hanging', price: 2299, discount: 20, image: '/blue-ceramic-plates-set.jpg' },
-      { id: 9, name: 'Table Centerpiece', price: 1999, discount: 30, image: '/blue-pottery-bowls-collection.jpg' },
-      { id: 10, name: 'Decorative Planter', price: 1499, discount: 28, image: '/traditional-blue-pottery-platter.jpg' },
-      // Add more products to Decor here
-    ]
-  },
-  {
-    id: 'new-arrivals',
-    title: 'New Arrivals',
-    subtitle: 'Fresh designs just added',
-    products: [
-      { id: 11, name: 'Premium Tea Set', price: 3299, discount: 35, image: '/blue-ceramic-coffee-mugs.jpg' },
-      { id: 12, name: 'Artisan Bowl Set', price: 2199, discount: 30, image: '/complete-blue-pottery-dinner-set.jpg' },
-      { id: 13, name: 'Designer Plates', price: 1699, discount: 33, image: '/blue-pottery-tea-set.jpg' },
-      { id: 14, name: 'Luxury Serving Set', price: 2899, discount: 27, image: '/blue-ceramic-plates-set.jpg' },
-      { id: 15, name: 'Modern Vase', price: 1899, discount: 32, image: '/blue-pottery-bowls-collection.jpg' },
-      // Add more products to New Arrivals here
-    ]
-  },
-  // You can easily add a new row here:
-  /*
-  {
-    id: 'best-sellers',
-    title: 'Best Sellers',
-    subtitle: 'Our most loved products',
-    products: [ ... ]
-  }
-  */
-];
+import { useProductsData, useAdminMode, Product } from '@/lib/cms';
+import { EditButton, ProductEditorModal } from '@/components/admin';
+import { Plus, Settings } from 'lucide-react';
 
 export default function Products() {
+  const { categories, updateProduct, addProduct, deleteProduct } = useProductsData();
+  const { isAdmin, isAuthenticated } = useAdminMode();
+
   const [toastData, setToastData] = useState<{ name: string; price: number; image: string } | null>(null);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [editorMode, setEditorMode] = useState<'edit' | 'add'>('edit');
 
   const handleAddToCart = (product: Product) => {
     setToastData({
@@ -87,9 +34,45 @@ export default function Products() {
     }, 3000);
   };
 
+  const handleEditProduct = (categoryId: string, product: Product) => {
+    setEditingCategoryId(categoryId);
+    setEditingProduct(product);
+    setEditorMode('edit');
+    setIsEditorOpen(true);
+  };
+
+  const handleAddProduct = (categoryId: string) => {
+    setEditingCategoryId(categoryId);
+    setEditingProduct(null);
+    setEditorMode('add');
+    setIsEditorOpen(true);
+  };
+
+  const handleSaveProduct = (productData: Partial<Product>) => {
+    if (!editingCategoryId) return;
+
+    if (editorMode === 'edit' && editingProduct) {
+      updateProduct(editingCategoryId, editingProduct.id, productData);
+    } else if (editorMode === 'add') {
+      addProduct(editingCategoryId, {
+        name: productData.name || 'New Product',
+        price: productData.price || 0,
+        discount: productData.discount || 0,
+        image: productData.image || '/placeholder.svg',
+        categoryId: editingCategoryId,
+      });
+    }
+  };
+
+  const handleDeleteProduct = (categoryId: string, productId: string) => {
+    if (confirm('Are you sure you want to delete this product?')) {
+      deleteProduct(categoryId, productId);
+    }
+  };
+
   return (
     <>
-      <section className="bg-gradient-to-b from-cream to-white py-12 sm:py-16">
+      <section className="relative bg-gradient-to-b from-cream to-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-serif font-bold text-blue mb-3">
@@ -102,8 +85,20 @@ export default function Products() {
 
           {/* Category Rows */}
           <div className="space-y-12">
-            {productCategories.map((category) => (
-              <div key={category.id} className="space-y-4">
+            {categories.map((category) => (
+              <div key={category.id} className="relative space-y-4">
+
+                {/* Admin Add Product Button */}
+                {isAdmin && isAuthenticated && (
+                  <button
+                    onClick={() => handleAddProduct(category.id)}
+                    className="absolute -top-2 right-0 z-20 flex items-center gap-2 px-3 py-1.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors shadow-lg"
+                  >
+                    <Plus size={16} />
+                    Add Product
+                  </button>
+                )}
+
                 {/* Category Header */}
                 <div className="flex items-baseline justify-between">
                   <div>
@@ -124,7 +119,26 @@ export default function Products() {
                     {[...Array(4)].map((_, setIndex) => (
                       <div key={setIndex} className="flex gap-6 shrink-0">
                         {category.products.map((product) => (
-                          <div key={`${setIndex}-${product.id}`} className="w-72 flex-shrink-0">
+                          <div
+                            key={`${setIndex}-${product.id}`}
+                            className="relative w-72 flex-shrink-0 group"
+                          >
+                            {/* Admin Edit Overlay - Only on first set */}
+                            {setIndex === 0 && isAdmin && isAuthenticated && (
+                              <div className="absolute top-2 right-2 z-30 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditProduct(category.id, product);
+                                  }}
+                                  className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+                                  title="Edit Product"
+                                >
+                                  <Settings size={14} />
+                                </button>
+                              </div>
+                            )}
+
                             <ProductCard
                               product={product}
                               onAddToCart={() => handleAddToCart(product)}
@@ -146,6 +160,20 @@ export default function Products() {
       </section>
 
       {toastData && <Toast product={toastData} />}
+
+      {/* Product Editor Modal */}
+      <ProductEditorModal
+        isOpen={isEditorOpen}
+        onClose={() => {
+          setIsEditorOpen(false);
+          setEditingProduct(null);
+          setEditingCategoryId(null);
+        }}
+        product={editingProduct}
+        onSave={handleSaveProduct}
+        mode={editorMode}
+        categoryTitle={categories.find(c => c.id === editingCategoryId)?.title}
+      />
 
       <style jsx>{`
         @keyframes scroll-seamless {
