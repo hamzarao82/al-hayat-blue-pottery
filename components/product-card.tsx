@@ -8,7 +8,7 @@ import Toast from './toast';
 import QuickViewModal from './quick-view-modal';
 
 interface Product {
-  id: number;
+  id: string | number;
   name: string;
   price: number;
   discount: number;
