@@ -12,7 +12,7 @@ import { CMSData } from './types';
  */
 export function getInitialData(): CMSData {
     return {
-        version: '1.0.0',
+        version: '1.0.1',
         lastUpdated: new Date().toISOString(),
 
         // ============================================
@@ -222,16 +222,43 @@ export function getInitialData(): CMSData {
         // Heritage Section
         // ============================================
         heritage: {
-            title: 'Our Heritage',
-            subtitle: 'A Legacy of Craftsmanship',
-            description: 'For generations, our artisans have been perfecting the art of blue pottery, passing down techniques and traditions that make each piece unique.',
+            title: 'The Heritage of',
+            subtitle: 'Blue Pottery',
+            description: 'Blue pottery, originating from the artisan traditions of Multan, Pakistan, is a centuries-old craft that blends Persian and South Asian influences. This exquisite art form has been perfected over generations, with master craftsmen dedicating their lives to preserving this magnificent legacy.',
             features: [
-                { icon: '🎨', text: 'Hand-painted designs' },
-                { icon: '🏺', text: 'Traditional techniques' },
-                { icon: '🌿', text: 'Eco-friendly materials' },
-                { icon: '👪', text: 'Family heritage' },
+                { icon: '🏺', title: 'Ancient Craftsmanship', description: 'Each piece is hand-thrown and meticulously hand-painted using traditional techniques passed down through families.' },
+                { icon: '🎨', title: 'Artisan Excellence', description: 'Our master artisans use natural cobalt-based pigments to create the signature deep blue patterns.' },
+                { icon: '🌿', title: 'Eco-Friendly Materials', description: 'We use sustainable, natural materials ensuring this heritage thrives for generations.' },
+                { icon: '👪', title: 'Family Heritage', description: 'Passed down through generations, preserving the authentic craft of Multan blue pottery.' },
             ],
-            image: '/assets/images/heritage-bg.jpg',
+            image: '/traditional-blue-pottery-artisan-crafting-handmade.jpg',
+        },
+
+        // ============================================
+        // Navbar
+        // ============================================
+        navbar: {
+            topBannerLeft: '🚚 FREE SHIPPING ACROSS PAKISTAN 📍',
+            topBannerRight: '🛡️ SAFE DELIVERY IS OUR RESPONSIBILITY ⭐',
+            logo: '', // Empty string will fallback to imported logo in component
+        },
+
+        // ============================================
+        // Footer
+        // ============================================
+        footer: {
+            brandTitle: 'Al Hayat',
+            brandSubtitle: 'Blue Pottery',
+            description: 'Premium handcrafted blue pottery from Multan, bringing centuries of tradition and timeless elegance to your home.',
+            phone: '+92 312 6331041',
+            email: 'info@alhayatbluepottery.com',
+            address: 'Multan, Punjab, Pakistan',
+            copyrightText: '© 2025 Al Hayat Blue Pottery. All rights reserved.',
+            socialLinks: [
+                { id: '1', platform: 'instagram', url: 'https://www.instagram.com/alhayatbluepottery/', label: 'Instagram' },
+                { id: '2', platform: 'facebook', url: 'https://www.facebook.com/share/17DER9uZJd/', label: 'Facebook' },
+                { id: '3', platform: 'whatsapp', url: 'https://wa.me/03126331041', label: 'WhatsApp' },
+            ],
         },
     };
 }

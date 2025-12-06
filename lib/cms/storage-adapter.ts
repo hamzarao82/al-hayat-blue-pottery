@@ -7,7 +7,7 @@
  */
 
 import { CMSData, StorageAdapter } from './types';
-import { getInitialData } from './initial-data';
+import { getInitialData } from '@/lib/cms/initial-data';
 
 const STORAGE_KEY = 'al-hayat-cms-data';
 const ADMIN_PASSWORD_KEY = 'al-hayat-admin-hash';
@@ -143,6 +143,8 @@ function mergeWithDefaults(oldData: Partial<CMSData>, defaults: CMSData): CMSDat
         categories: { ...defaults.categories, ...oldData.categories },
         reviews: { ...defaults.reviews, ...oldData.reviews },
         heritage: { ...defaults.heritage, ...oldData.heritage },
+        navbar: { ...defaults.navbar, ...oldData.navbar },
+        footer: { ...defaults.footer, ...oldData.footer },
         lastUpdated: new Date().toISOString(),
         version: defaults.version,
     };
@@ -199,7 +201,7 @@ export function isPasswordCustomized(): boolean {
  * Compress and convert image file to Base64
  * Max dimension: 800px, Quality: 0.8
  */
-export async function imageToBase64(file: File, maxDimension: number = 800): Promise<string> {
+export async function imageToBase64(file: File, maxDimension: number = 800, quality: number = 0.8): Promise<string> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -233,7 +235,7 @@ export async function imageToBase64(file: File, maxDimension: number = 800): Pro
                 ctx.drawImage(img, 0, 0, width, height);
 
                 // Convert to JPEG for smaller file size
-                const base64 = canvas.toDataURL('image/jpeg', 0.8);
+                const base64 = canvas.toDataURL('image/jpeg', quality);
                 resolve(base64);
             };
             img.onerror = () => reject(new Error('Failed to load image'));

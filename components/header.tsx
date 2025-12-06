@@ -6,11 +6,17 @@ import SearchDropdown from './search-dropdown';
 import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/assets/images/Picsart_25-11-22_18-30-01-618.png';
+import { useNavbarData, useAdminMode } from '@/lib/cms';
+import { EditButton, NavbarEditorModal } from '@/components/admin';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+
+  const { navbar } = useNavbarData();
+  const { isAdmin, isAuthenticated } = useAdminMode();
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const dropdownItems = {
     tableware: [
@@ -46,20 +52,27 @@ export default function Header() {
   return (
     <>
       {/* Top Banner */}
-      <div className="bg-blue text-cream text-center py-2 text-xs sm:text-sm flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-2">
+      <div className="bg-blue text-cream text-center py-2 text-xs sm:text-sm flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-2 relative">
+
+        {/* Admin Edit Button */}
+        {isAdmin && isAuthenticated && (
+          <EditButton
+            onClick={() => setIsEditorOpen(true)}
+            label="Edit Navbar"
+            position="top-right"
+            size="sm"
+            className="!top-1 !right-1 z-50"
+          />
+        )}
+
         <div className="flex flex-wrap items-center gap-1 justify-center">
-          <span>🚚</span>
-          <span className="whitespace-nowrap">FREE SHIPPING ACROSS PAKISTAN</span>
-          <span>📍</span>
+          <span className="whitespace-nowrap">{navbar.topBannerLeft}</span>
         </div>
 
         <span className="hidden sm:block mx-2">|</span>
 
         <div className="flex flex-wrap items-center gap-1 justify-center">
-          <span>🛡️</span>
-          <span className="whitespace-nowrap">SAFE DELIVERY</span>
-          <span>IS OUR RESPONSIBILITY</span>
-          <span>⭐</span>
+          <span className="whitespace-nowrap">{navbar.topBannerRight}</span>
         </div>
       </div>
 
@@ -71,14 +84,22 @@ export default function Header() {
             {/* LEFT — LOGO */}
             <div className="flex-shrink-0 z-30">
               <Link href="/" className="inline-block group">
-                <Image
-                  src={logo}
-                  alt="Al Hayat Blue Pottery"
-                  height={70}
-                  width={180}
-                  className="h-12 sm:h-14 md:h-16 w-auto hover:scale-105 transition-transform duration-300"
-                  priority
-                />
+                {navbar.logo ? (
+                  <img
+                    src={navbar.logo}
+                    alt="Al Hayat Blue Pottery"
+                    className="h-12 sm:h-14 md:h-16 w-auto hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <Image
+                    src={logo}
+                    alt="Al Hayat Blue Pottery"
+                    height={70}
+                    width={180}
+                    className="h-12 sm:h-14 md:h-16 w-auto hover:scale-105 transition-transform duration-300"
+                    priority
+                  />
+                )}
               </Link>
             </div>
 
@@ -315,6 +336,12 @@ export default function Header() {
 
         </div>
       </header>
+
+      {/* Navbar Editor Modal */}
+      <NavbarEditorModal
+        isOpen={isEditorOpen}
+        onClose={() => setIsEditorOpen(false)}
+      />
     </>
   );
 }

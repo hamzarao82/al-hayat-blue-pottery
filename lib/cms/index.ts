@@ -32,6 +32,8 @@ export {
     useCategoriesData,
     useReviewsData,
     useAdminMode,
+    useNavbarData,
+    useFooterData,
 } from './cms-context';
 
 // Provider Wrapper (use this in layout)

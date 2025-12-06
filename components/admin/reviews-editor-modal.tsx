@@ -3,11 +3,12 @@
 /**
  * Reviews Editor Modal
  * Allows adding, editing, and deleting customer reviews
+ * With image URL input and upload option
  */
 
-import React, { useState } from 'react';
-import { X, Save, Star, Plus, Trash2, MessageSquare, User } from 'lucide-react';
-import { useReviewsData, Review } from '@/lib/cms';
+import React, { useState, useRef } from 'react';
+import { X, Save, Star, Plus, Trash2, MessageSquare, Upload, Link } from 'lucide-react';
+import { useReviewsData, Review, imageToBase64 } from '@/lib/cms';
 
 interface ReviewsEditorModalProps {
     isOpen: boolean;
@@ -31,6 +32,7 @@ export default function ReviewsEditorModal({ isOpen, onClose }: ReviewsEditorMod
         text: '',
         avatar: '',
     });
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     if (!isOpen) return null;
 
@@ -100,6 +102,20 @@ export default function ReviewsEditorModal({ isOpen, onClose }: ReviewsEditorMod
         resetForm();
     };
 
+    // Handle image upload
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const base64 = await imageToBase64(file, 150, 0.8);
+            setEditData({ ...editData, avatar: base64 });
+        } catch (error) {
+            console.error('Failed to process image:', error);
+            alert('Failed to process image. Please try a smaller file.');
+        }
+    };
+
     // Star rating component
     const StarRating = ({ rating, onChange }: { rating: number; onChange?: (r: number) => void }) => (
         <div className="flex gap-1">
@@ -119,6 +135,11 @@ export default function ReviewsEditorModal({ isOpen, onClose }: ReviewsEditorMod
             ))}
         </div>
     );
+
+    // Check if avatar is valid
+    const isValidAvatar = (src: string): boolean => {
+        return Boolean(src && (src.startsWith('data:') || src.startsWith('http')));
+    };
 
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto">
@@ -217,6 +238,63 @@ export default function ReviewsEditorModal({ isOpen, onClose }: ReviewsEditorMod
                                 />
                             </div>
 
+                            {/* Avatar Image - URL + Upload */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Profile Image (URL or Upload)
+                                </label>
+                                <div className="flex gap-2 items-start">
+                                    {/* Current Avatar Preview */}
+                                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white font-bold text-lg overflow-hidden flex-shrink-0 border-2 border-gray-200">
+                                        {isValidAvatar(editData.avatar) ? (
+                                            <img
+                                                src={editData.avatar}
+                                                alt="Avatar"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            editData.name.charAt(0).toUpperCase() || '?'
+                                        )}
+                                    </div>
+
+                                    {/* URL Input */}
+                                    <div className="flex-1">
+                                        <div className="flex gap-2">
+                                            <div className="relative flex-1">
+                                                <Link size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                                <input
+                                                    type="text"
+                                                    value={editData.avatar}
+                                                    onChange={(e) => setEditData({ ...editData, avatar: e.target.value })}
+                                                    className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                                                    placeholder="https://example.com/avatar.jpg"
+                                                />
+                                            </div>
+
+                                            {/* Upload Button */}
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()}
+                                                className="flex items-center gap-2 px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium text-gray-700"
+                                            >
+                                                <Upload size={16} />
+                                                Upload
+                                            </button>
+                                            <input
+                                                ref={fileInputRef}
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageUpload}
+                                                className="hidden"
+                                            />
+                                        </div>
+                                        <p className="text-xs text-gray-400 mt-1">
+                                            Enter an image URL or upload from device
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="flex gap-2 justify-end pt-2">
                                 <button
                                     onClick={handleCancel}
@@ -247,8 +325,16 @@ export default function ReviewsEditorModal({ isOpen, onClose }: ReviewsEditorMod
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-start gap-3 flex-1">
                                         {/* Avatar */}
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white font-bold flex-shrink-0">
-                                            {review.name.charAt(0).toUpperCase()}
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-white font-bold flex-shrink-0 overflow-hidden">
+                                            {isValidAvatar(review.avatar || '') ? (
+                                                <img
+                                                    src={review.avatar}
+                                                    alt={review.name}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                review.name.charAt(0).toUpperCase()
+                                            )}
                                         </div>
 
                                         {/* Content */}

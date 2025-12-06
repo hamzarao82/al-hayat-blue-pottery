@@ -43,18 +43,23 @@ export default function Heritage() {
                 {heritage.title} <span className="bg-gradient-to-r from-blue-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent">{heritage.subtitle}</span>
               </h2>
 
-              <p className="text-lg text-blue-100/90 mb-6 leading-relaxed">
+              <p className="text-lg text-blue-100/90 mb-8 leading-relaxed">
                 {heritage.description}
               </p>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {heritage.features.map((feature, index) => (
                   <div key={index} className="flex gap-4">
-                    <div className="text-caramel text-2xl font-bold flex-shrink-0">
+                    <div className="w-12 h-12 flex-shrink-0 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center text-2xl">
                       {feature.icon}
                     </div>
                     <div>
-                      <p className="text-blue-100/90">{feature.text}</p>
+                      <h3 className="font-semibold text-lg text-white mb-1">
+                        {feature.title}
+                      </h3>
+                      <p className="text-blue-100/80 text-sm leading-relaxed">
+                        {feature.description}
+                      </p>
                     </div>
                   </div>
                 ))}

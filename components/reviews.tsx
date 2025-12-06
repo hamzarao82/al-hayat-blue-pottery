@@ -3,17 +3,44 @@
 /**
  * Reviews Section Component
  * Integrated with CMS for editable content
+ * Includes public "Add Review" button for customers
  */
 
-import { Star } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Star, Plus, X } from 'lucide-react';
+import { useState } from 'react';
 import { useReviewsData, useAdminMode } from '@/lib/cms';
 import { EditButton, ReviewsEditorModal } from '@/components/admin';
 
 export default function Reviews() {
-  const { reviewsContent } = useReviewsData();
+  const { reviewsContent, addReview } = useReviewsData();
   const { isAdmin, isAuthenticated } = useAdminMode();
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+
+  // Public add review modal
+  const [isPublicModalOpen, setIsPublicModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    location: '',
+    rating: 5,
+    text: '',
+  });
+
+  const handlePublicSubmit = () => {
+    if (!formData.name || !formData.text) {
+      alert('Please fill in your name and review');
+      return;
+    }
+
+    addReview({
+      name: formData.name,
+      location: formData.location || 'Customer',
+      rating: formData.rating,
+      text: formData.text,
+      avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`,
+    });
+    setIsPublicModalOpen(false);
+    setFormData({ name: '', location: '', rating: 5, text: '' });
+  };
 
   // Create enough duplicates for seamless infinite scroll
   const duplicatedReviews = [...reviewsContent.reviews, ...reviewsContent.reviews, ...reviewsContent.reviews, ...reviewsContent.reviews];
@@ -43,6 +70,15 @@ export default function Reviews() {
                 {reviewsContent.subtitle}
               </p>
             </div>
+
+            {/* Public Add Review Button */}
+            <button
+              onClick={() => setIsPublicModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-cyan-600 transition-all shadow-lg"
+            >
+              <Plus size={18} />
+              <span className="hidden sm:inline">Add Review</span>
+            </button>
           </div>
 
           {/* Infinite Scroll Container */}
@@ -130,11 +166,114 @@ export default function Reviews() {
         `}</style>
       </section>
 
-      {/* Reviews Editor Modal */}
+      {/* Admin Reviews Editor Modal */}
       <ReviewsEditorModal
         isOpen={isEditorOpen}
         onClose={() => setIsEditorOpen(false)}
       />
+
+      {/* Public Add Review Modal */}
+      {isPublicModalOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsPublicModalOpen(false)}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Star size={24} />
+                Add Your Review
+              </h2>
+              <button
+                onClick={() => setIsPublicModalOpen(false)}
+                className="p-2 rounded-full hover:bg-white/20 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Form */}
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Your Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Sarah Ahmed"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Lahore, Pakistan"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Rating
+                </label>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, rating: star })}
+                      className="hover:scale-110 transition-transform"
+                    >
+                      <Star
+                        size={28}
+                        className={star <= formData.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Your Review *
+                </label>
+                <textarea
+                  value={formData.text}
+                  onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+                  rows={4}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                  placeholder="Share your experience with our products..."
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setIsPublicModalOpen(false)}
+                  className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handlePublicSubmit}
+                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-cyan-600 transition-all shadow-lg"
+                >
+                  Submit Review
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

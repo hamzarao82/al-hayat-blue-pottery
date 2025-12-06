@@ -108,7 +108,8 @@ export interface ReviewsContent {
 // ============================================
 export interface HeritageFeature {
     icon: string;
-    text: string;
+    title: string;
+    description: string;
 }
 
 export interface HeritageContent {
@@ -117,6 +118,33 @@ export interface HeritageContent {
     description: string;
     features: HeritageFeature[];
     image: string;
+}
+
+// ============================================
+// Navbar & Footer Types
+// ============================================
+export interface NavbarContent {
+    topBannerLeft: string;
+    topBannerRight: string;
+    logo: string;
+}
+
+export interface SocialLink {
+    id: string;
+    platform: 'instagram' | 'facebook' | 'whatsapp' | 'twitter' | 'youtube' | 'tiktok' | 'pinterest' | 'linkedin' | 'email' | 'phone' | 'map';
+    url: string;
+    label: string;
+}
+
+export interface FooterContent {
+    brandTitle: string;
+    brandSubtitle: string;
+    description: string;
+    phone: string;
+    email: string;
+    address: string;
+    copyrightText: string;
+    socialLinks: SocialLink[];
 }
 
 // ============================================
@@ -129,6 +157,8 @@ export interface CMSData {
     categories: CategoriesContent;
     reviews: ReviewsContent;
     heritage: HeritageContent;
+    navbar: NavbarContent;
+    footer: FooterContent;
     lastUpdated: string;
     version: string;
 }
@@ -180,6 +210,8 @@ export interface CMSContextType {
     deleteReview: (reviewId: string) => void;
 
     updateHeritage: (content: Partial<HeritageContent>) => void;
+    updateNavbar: (content: Partial<NavbarContent>) => void;
+    updateFooter: (content: Partial<FooterContent>) => void;
 
     // Utility
     saveToStorage: () => void;

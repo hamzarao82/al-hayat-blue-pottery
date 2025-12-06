@@ -28,4 +28,6 @@ export { default as GalleryEditorModal } from './gallery-editor-modal';
 export { default as CategoriesEditorModal } from './categories-editor-modal';
 export { default as ReviewsEditorModal } from './reviews-editor-modal';
 export { default as HeritageEditorModal } from './heritage-editor-modal';
+export { default as NavbarEditorModal } from './navbar-editor-modal';
+export { default as FooterEditorModal } from './footer-editor-modal';
 export { default as ChangePasswordModal } from './change-password-modal';

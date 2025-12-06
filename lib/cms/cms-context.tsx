@@ -27,6 +27,8 @@ import {
     Category,
     Review,
     HeritageContent,
+    NavbarContent,
+    FooterContent,
 } from './types';
 import { storageAdapter, verifyAdminPassword, generateId } from './storage-adapter';
 import { getInitialData, cloneInitialData } from './initial-data';
@@ -404,6 +406,26 @@ export function CMSProvider({ children }: CMSProviderProps) {
     // ============================================
     // Utility Functions
     // ============================================
+    // ============================================
+    // Navbar & Footer CRUD
+    // ============================================
+    const updateNavbar = useCallback((content: Partial<NavbarContent>) => {
+        setData(prev => ({
+            ...prev,
+            navbar: { ...prev.navbar, ...content },
+        }));
+    }, []);
+
+    const updateFooter = useCallback((content: Partial<FooterContent>) => {
+        setData(prev => ({
+            ...prev,
+            footer: { ...prev.footer, ...content },
+        }));
+    }, []);
+
+    // ============================================
+    // Utility Functions
+    // ============================================
     const resetToDefaults = useCallback(() => {
         setData(cloneInitialData());
     }, []);
@@ -458,6 +480,8 @@ export function CMSProvider({ children }: CMSProviderProps) {
         addReview,
         deleteReview,
         updateHeritage,
+        updateNavbar,
+        updateFooter,
         saveToStorage,
         resetToDefaults,
         exportData,
@@ -490,6 +514,8 @@ export function CMSProvider({ children }: CMSProviderProps) {
         addReview,
         deleteReview,
         updateHeritage,
+        updateNavbar,
+        updateFooter,
         saveToStorage,
         resetToDefaults,
         exportData,
@@ -579,6 +605,22 @@ export function useReviewsData() {
         updateReview,
         addReview,
         deleteReview,
+    };
+}
+
+export function useNavbarData() {
+    const { data, updateNavbar } = useCMS();
+    return {
+        navbar: data.navbar || getInitialData().navbar,
+        updateNavbar,
+    };
+}
+
+export function useFooterData() {
+    const { data, updateFooter } = useCMS();
+    return {
+        footer: data.footer || getInitialData().footer,
+        updateFooter,
     };
 }
 
