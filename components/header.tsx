@@ -18,35 +18,126 @@ export default function Header() {
   const { isAdmin, isAuthenticated } = useAdminMode();
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
-  const dropdownItems = {
-    tableware: [
-      { label: 'Dinner Sets', href: '/tableware/dinner-sets' },
-      { label: 'Serving Dishes', href: '/tableware/serving-dishes' },
-      { label: 'Plates & Platters', href: '/tableware/plates-platters' },
-      { label: 'Bowls', href: '/tableware/bowls' },
-      { label: 'Blue Pottery Karahi', href: '/tableware/blue-pottery-karahi' },
-      { label: 'Handles & Cover Pots', href: '/tableware/handles-cover-pots' },
-      { label: 'Pottery Jars', href: '/tableware/pottery-jars' },
-      { label: 'Tea Mugs', href: '/tableware/tea-mugs' },
-      { label: 'Tea Coasters', href: '/tableware/tea-coasters' },
-    ],
-    decor: [
-      { label: 'Planters', href: '/decor/planters' },
-      { label: 'Vases', href: '/decor/vases' },
-      { label: 'Wall Hangings', href: '/decor/wall-hangings' },
-      { label: 'Aromatic Warmers', href: '/decor/aromatic-warmers' },
-      { label: 'Table Decoration', href: '/decor/table-decoration' },
-      { label: 'Lamps', href: '/decor/lamps' },
-    ],
-    designFamily: [
-      { label: 'Blue Felicity', href: '/design-family/blue-felicity' },
-      { label: 'Blue Pattern', href: '/design-family/blue-pattern' },
-      { label: 'Tranquility', href: '/design-family/tranquility' },
-      { label: 'Serina Blue', href: '/design-family/serina-blue' },
-      { label: 'Blue Flower', href: '/design-family/blue-flower' },
-      { label: 'Blue Celico', href: '/design-family/blue-celico' },
-      { label: 'Spring Pattern', href: '/design-family/spring-pattern' },
-    ],
+  // Helper to render desktop navigation items
+  const renderDesktopItem = (item: any) => {
+    if (item.type === 'link') {
+      return (
+        <Link
+          key={item.id}
+          href={item.href}
+          className="text-blue hover:text-caramel hover:bg-blue/5 text-sm font-medium px-3 py-2 rounded-md transition-all duration-200 relative group whitespace-nowrap"
+        >
+          {item.label}
+          <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-caramel group-hover:w-3/4 transition-all duration-300"></span>
+        </Link>
+      );
+    }
+
+    if (item.type === 'dropdown') {
+      return (
+        <div
+          key={item.id}
+          className="relative group"
+          onMouseEnter={() => setOpenDropdown(item.id)}
+          onMouseLeave={() => {
+            setOpenDropdown(null);
+            setOpenSubmenu(null);
+          }}
+        >
+          <button className="text-blue hover:text-caramel hover:bg-blue/5 text-sm font-medium px-3 py-2 rounded-md flex items-center gap-1 transition-all duration-200 relative group/btn whitespace-nowrap">
+            {item.label}
+            <ChevronDown size={16} className="group-hover:rotate-180 transition-transform duration-300" />
+            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-caramel group-hover/btn:w-3/4 transition-all duration-300"></span>
+          </button>
+
+          {/* MAIN DROPDOWN PANEL */}
+          <div className="absolute left-0 mt-2 bg-cream/95 backdrop-blur-md border border-blue/10 rounded-lg shadow-xl
+              opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-2
+              w-56 md:w-60">
+
+            {item.groups?.map((group: any) => (
+              <div
+                key={group.id}
+                className="relative group/sub"
+                onMouseEnter={() => setOpenSubmenu(group.id)}
+              >
+                <button className="w-full flex justify-between items-center text-blue hover:bg-caramel/10 hover:text-caramel
+                    px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200">
+                  {group.label} <ChevronRight size={14} className="group-hover/sub:translate-x-1 transition-transform duration-200" />
+                </button>
+
+                {openSubmenu === group.id && (
+                  <div className="absolute top-0 left-full ml-2 bg-cream/95 backdrop-blur-md border border-blue/10 shadow-xl
+                      rounded-lg w-48 sm:w-56 max-w-[80vw] z-50 p-2 animate-in fade-in slide-in-from-left-2 duration-200 max-h-[80vh] overflow-y-auto">
+                    {group.items?.map((subItem: any) => (
+                      <Link key={subItem.id} href={subItem.href}
+                        className="block px-3 py-2 text-sm text-blue hover:bg-caramel/10 hover:text-caramel hover:translate-x-1 rounded-md transition-all duration-200">
+                        {subItem.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+  };
+
+  // Helper to render mobile navigation items
+  const renderMobileItem = (item: any) => {
+    if (item.type === 'link') {
+      return (
+        <Link
+          key={item.id}
+          href={item.href}
+          className="block text-blue font-medium px-3 py-2 hover:bg-blue/5 rounded-md transition-colors"
+          onClick={() => setIsOpen(false)}
+        >
+          {item.label}
+        </Link>
+      );
+    }
+
+    if (item.type === 'dropdown') {
+      const isDropdownOpen = openDropdown === item.id;
+      return (
+        <div key={item.id}>
+          <button
+            onClick={() => setOpenDropdown(isDropdownOpen ? null : item.id)}
+            className="w-full flex justify-between items-center text-blue px-3 py-2 text-sm font-medium hover:bg-blue/5 rounded-md transition-colors"
+          >
+            {item.label}
+            <ChevronDown size={16}
+              className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {isDropdownOpen && (
+            <div className="ml-4 mt-1 space-y-3">
+              {item.groups?.map((group: any) => (
+                <div key={group.id}>
+                  <p className="text-blue font-semibold mb-1 text-sm">{group.label}</p>
+                  <div className="bg-blue/5 rounded-md border-l-2 border-caramel">
+                    {group.items?.map((subItem: any) => (
+                      <Link
+                        key={subItem.id}
+                        href={subItem.href}
+                        className="block px-4 py-2 text-sm text-blue hover:bg-blue/10 transition-colors"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {subItem.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
   };
 
   return (
@@ -105,129 +196,7 @@ export default function Header() {
 
             {/* CENTER — NAVIGATION */}
             <nav className="hidden lg:flex items-center justify-center gap-1 xl:gap-2 absolute left-1/2 -translate-x-1/2 z-20">
-
-              <Link
-                href="/new-arrivals"
-                className="text-blue hover:text-caramel hover:bg-blue/5 text-sm font-medium px-3 py-2 rounded-md transition-all duration-200 relative group whitespace-nowrap"
-              >
-                New Arrivals
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-caramel group-hover:w-3/4 transition-all duration-300"></span>
-              </Link>
-
-              {/* PRODUCTS (MULTI LEVEL DROPDOWN) */}
-              <div
-                className="relative group"
-                onMouseEnter={() => setOpenDropdown('products')}
-                onMouseLeave={() => {
-                  setOpenDropdown(null);
-                  setOpenSubmenu(null);
-                }}
-              >
-                <button className="text-blue hover:text-caramel hover:bg-blue/5 text-sm font-medium px-3 py-2 rounded-md flex items-center gap-1 transition-all duration-200 relative group/btn whitespace-nowrap">
-                  Products
-                  <ChevronDown size={16} className="group-hover:rotate-180 transition-transform duration-300" />
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-caramel group-hover/btn:w-3/4 transition-all duration-300"></span>
-                </button>
-
-                {/* MAIN DROPDOWN PANEL */}
-                <div className="absolute left-0 mt-2 bg-cream/95 backdrop-blur-md border border-blue/10 rounded-lg shadow-xl
-                    opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-2
-                    w-56 md:w-60">
-
-                  {/* TABLEWARE */}
-                  <div
-                    className="relative group/sub"
-                    onMouseEnter={() => setOpenSubmenu('tableware')}
-                  >
-                    <button className="w-full flex justify-between items-center text-blue hover:bg-caramel/10 hover:text-caramel
-                        px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200">
-                      Tableware <ChevronRight size={14} className="group-hover/sub:translate-x-1 transition-transform duration-200" />
-                    </button>
-
-                    {openSubmenu === 'tableware' && (
-                      <div className="absolute top-0 left-full ml-2 bg-cream/95 backdrop-blur-md border border-blue/10 shadow-xl
-                          rounded-lg w-48 sm:w-56 max-w-[80vw] z-50 p-2 animate-in fade-in slide-in-from-left-2 duration-200">
-                        {dropdownItems.tableware.map(item => (
-                          <Link key={item.label} href={item.href}
-                            className="block px-3 py-2 text-sm text-blue hover:bg-caramel/10 hover:text-caramel hover:translate-x-1 rounded-md transition-all duration-200">
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* DECOR */}
-                  <div
-                    className="relative group/sub"
-                    onMouseEnter={() => setOpenSubmenu('decor')}
-                  >
-                    <button className="w-full flex justify-between items-center text-blue hover:bg-caramel/10 hover:text-caramel
-                        px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200">
-                      Decor <ChevronRight size={14} className="group-hover/sub:translate-x-1 transition-transform duration-200" />
-                    </button>
-
-                    {openSubmenu === 'decor' && (
-                      <div className="absolute top-0 left-full ml-2 bg-cream/95 backdrop-blur-md border border-blue/10 shadow-xl
-                          rounded-lg w-48 sm:w-56 max-w-[80vw] z-50 p-2 animate-in fade-in slide-in-from-left-2 duration-200">
-                        {dropdownItems.decor.map(item => (
-                          <Link key={item.label} href={item.href}
-                            className="block px-3 py-2 text-sm text-blue hover:bg-caramel/10 hover:text-caramel hover:translate-x-1 rounded-md transition-all duration-200">
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* DESIGN FAMILY */}
-                  <div
-                    className="relative group/sub"
-                    onMouseEnter={() => setOpenSubmenu('designFamily')}
-                  >
-                    <button className="w-full flex justify-between items-center text-blue hover:bg-caramel/10 hover:text-caramel
-                        px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200">
-                      Design Family <ChevronRight size={14} className="group-hover/sub:translate-x-1 transition-transform duration-200" />
-                    </button>
-
-                    {openSubmenu === 'designFamily' && (
-                      <div className="absolute top-0 left-full ml-2 bg-cream/95 backdrop-blur-md border border-blue/10 shadow-xl
-                          rounded-lg w-48 sm:w-56 max-w-[80vw] z-50 p-2 max-h-64 overflow-y-auto animate-in fade-in slide-in-from-left-2 duration-200">
-                        {dropdownItems.designFamily.map(item => (
-                          <Link key={item.label} href={item.href}
-                            className="block px-3 py-2 text-sm text-blue hover:bg-caramel/10 hover:text-caramel hover:translate-x-1 rounded-md transition-all duration-200">
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <Link
-                href="/packaging-video"
-                className="text-blue hover:text-caramel hover:bg-blue/5 text-sm font-medium px-3 py-2 rounded-md transition-all duration-200 relative group whitespace-nowrap"
-              >
-                Packaging
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-caramel group-hover:w-3/4 transition-all duration-300"></span>
-              </Link>
-
-              <Link
-                href="/sale"
-                className="text-blue hover:text-caramel hover:bg-blue/5 text-sm font-medium px-3 py-2 rounded-md transition-all duration-200 relative group whitespace-nowrap"
-              >
-                SALE
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-caramel group-hover:w-3/4 transition-all duration-300"></span>
-              </Link>
-
-              <Link
-                href="/b-stock"
-                className="text-blue hover:text-caramel hover:bg-blue/5 text-sm font-medium px-3 py-2 rounded-md transition-all duration-200 relative group whitespace-nowrap"
-              >
-                B-Stock
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-caramel group-hover:w-3/4 transition-all duration-300"></span>
-              </Link>
+              {navbar.items?.map(renderDesktopItem)}
             </nav>
 
             {/* RIGHT — Search, Account, Cart, Mobile Menu */}
@@ -256,81 +225,11 @@ export default function Header() {
           {/* MOBILE MENU */}
           {isOpen && (
             <div className="lg:hidden pb-4 space-y-2 mt-2">
+              {navbar.items?.map(renderMobileItem)}
 
-              <Link href="/new-arrivals" className="block text-blue font-medium px-3 py-2 hover:bg-blue/5 rounded-md transition-colors">
-                New Arrivals
-              </Link>
-
-              <div>
-                <button
-                  onClick={() => setOpenDropdown(openDropdown === 'products' ? null : 'products')}
-                  className="w-full flex justify-between items-center text-blue px-3 py-2 text-sm font-medium hover:bg-blue/5 rounded-md transition-colors"
-                >
-                  Products
-                  <ChevronDown size={16}
-                    className={`transition-transform duration-200 ${openDropdown === 'products' ? 'rotate-180' : ''}`}
-                  />
-                </button>
-
-                {openDropdown === 'products' && (
-                  <div className="ml-4 mt-1 space-y-3">
-
-                    <div>
-                      <p className="text-blue font-semibold mb-1 text-sm">Tableware</p>
-                      <div className="bg-blue/5 rounded-md border-l-2 border-caramel">
-                        {dropdownItems.tableware.map(item => (
-                          <Link key={item.label} href={item.href}
-                            className="block px-4 py-2 text-sm text-blue hover:bg-blue/10 transition-colors">
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="text-blue font-semibold mb-1 text-sm">Decor</p>
-                      <div className="bg-blue/5 rounded-md border-l-2 border-caramel">
-                        {dropdownItems.decor.map(item => (
-                          <Link key={item.label} href={item.href}
-                            className="block px-4 py-2 text-sm text-blue hover:bg-blue/10 transition-colors">
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="text-blue font-semibold mb-1 text-sm">Design Family</p>
-                      <div className="bg-blue/5 rounded-md border-l-2 border-caramel max-h-52 overflow-y-auto">
-                        {dropdownItems.designFamily.map(item => (
-                          <Link key={item.label} href={item.href}
-                            className="block px-4 py-2 text-sm text-blue hover:bg-blue/10 transition-colors">
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-
-                  </div>
-                )}
-              </div>
-
-              <Link href="/packaging-video" className="block text-blue font-medium px-3 py-2 hover:bg-blue/5 rounded-md transition-colors">
-                Packaging
-              </Link>
-
-              <Link href="/sale" className="block text-blue font-medium px-3 py-2 hover:bg-blue/5 rounded-md transition-colors">
-                SALE
-              </Link>
-
-              <Link href="/b-stock" className="block text-blue font-medium px-3 py-2 hover:bg-blue/5 rounded-md transition-colors">
-                B-Stock
-              </Link>
-
-              <Link href="/account" className="block text-blue font-medium px-3 py-2 hover:bg-blue/5 rounded-md transition-colors">
+              <Link href="/account" className="block text-blue font-medium px-3 py-2 hover:bg-blue/5 rounded-md transition-colors" onClick={() => setIsOpen(false)}>
                 Account
               </Link>
-
             </div>
           )}
 

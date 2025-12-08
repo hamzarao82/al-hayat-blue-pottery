@@ -31,7 +31,7 @@ export default function NewArrivalsPage() {
   return (
     <div className="min-h-screen bg-cream">
       <Header />
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12">
           <div className="inline-block bg-caramel text-cream px-4 py-2 rounded-full text-sm font-medium mb-4">Just Arrived</div>
@@ -45,6 +45,7 @@ export default function NewArrivalsPage() {
               key={product.id}
               product={product}
               onAddToCart={() => handleAddToCart(product)}
+              categoryId="new-arrivals"
             />
           ))}
         </div>

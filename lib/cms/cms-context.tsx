@@ -610,8 +610,19 @@ export function useReviewsData() {
 
 export function useNavbarData() {
     const { data, updateNavbar } = useCMS();
+
+    // Memoize the derived navbar data to prevent infinite loops in consumers
+    const navbar = useMemo(() => {
+        const initialNavbar = getInitialData().navbar;
+        return {
+            ...initialNavbar,
+            ...(data.navbar || {}),
+            items: data.navbar?.items?.length ? data.navbar.items : initialNavbar.items
+        };
+    }, [data.navbar]);
+
     return {
-        navbar: data.navbar || getInitialData().navbar,
+        navbar,
         updateNavbar,
     };
 }

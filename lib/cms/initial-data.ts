@@ -103,8 +103,8 @@ export function getInitialData(): CMSData {
         // Shop Categories Section
         // ============================================
         categories: {
-            title: 'Shop our top',
-            highlightedTitle: 'categories',
+            title: 'Shop our Top',
+            highlightedTitle: 'Categories',
             subtitle: 'Discover handcrafted blue pottery pieces that blend tradition with contemporary design',
             categories: [
                 { id: 'cat-1', title: 'Blue Pottery Tea Sets', image: '/assets/images/tea-set.png', link: '/tableware/tea-sets', order: 1 },
@@ -241,6 +241,62 @@ export function getInitialData(): CMSData {
             topBannerLeft: '🚚 FREE SHIPPING ACROSS PAKISTAN 📍',
             topBannerRight: '🛡️ SAFE DELIVERY IS OUR RESPONSIBILITY ⭐',
             logo: '', // Empty string will fallback to imported logo in component
+            items: [
+                { id: 'nav-1', type: 'link', label: 'New Arrivals', href: '/new-arrivals' },
+                {
+                    id: 'nav-2',
+                    type: 'dropdown',
+                    label: 'Products',
+                    groups: [
+                        {
+                            id: 'group-1',
+                            type: 'group',
+                            label: 'Tableware',
+                            items: [
+                                { id: 'link-1-1', type: 'link', label: 'Dinner Sets', href: '/tableware/dinner-sets' },
+                                { id: 'link-1-2', type: 'link', label: 'Serving Dishes', href: '/tableware/serving-dishes' },
+                                { id: 'link-1-3', type: 'link', label: 'Plates & Platters', href: '/tableware/plates-platters' },
+                                { id: 'link-1-4', type: 'link', label: 'Bowls', href: '/tableware/bowls' },
+                                { id: 'link-1-5', type: 'link', label: 'Blue Pottery Karahi', href: '/tableware/blue-pottery-karahi' },
+                                { id: 'link-1-6', type: 'link', label: 'Handles & Cover Pots', href: '/tableware/handles-cover-pots' },
+                                { id: 'link-1-7', type: 'link', label: 'Pottery Jars', href: '/tableware/pottery-jars' },
+                                { id: 'link-1-8', type: 'link', label: 'Tea Mugs', href: '/tableware/tea-mugs' },
+                                { id: 'link-1-9', type: 'link', label: 'Tea Coasters', href: '/tableware/tea-coasters' },
+                            ]
+                        },
+                        {
+                            id: 'group-2',
+                            type: 'group',
+                            label: 'Decor',
+                            items: [
+                                { id: 'link-2-1', type: 'link', label: 'Planters', href: '/decor/planters' },
+                                { id: 'link-2-2', type: 'link', label: 'Vases', href: '/decor/vases' },
+                                { id: 'link-2-3', type: 'link', label: 'Wall Hangings', href: '/decor/wall-hangings' },
+                                { id: 'link-2-4', type: 'link', label: 'Aromatic Warmers', href: '/decor/aromatic-warmers' },
+                                { id: 'link-2-5', type: 'link', label: 'Table Decoration', href: '/decor/table-decoration' },
+                                { id: 'link-2-6', type: 'link', label: 'Lamps', href: '/decor/lamps' },
+                            ]
+                        },
+                        {
+                            id: 'group-3',
+                            type: 'group',
+                            label: 'Design Family',
+                            items: [
+                                { id: 'link-3-1', type: 'link', label: 'Blue Felicity', href: '/design-family/blue-felicity' },
+                                { id: 'link-3-2', type: 'link', label: 'Blue Pattern', href: '/design-family/blue-pattern' },
+                                { id: 'link-3-3', type: 'link', label: 'Tranquility', href: '/design-family/tranquility' },
+                                { id: 'link-3-4', type: 'link', label: 'Serina Blue', href: '/design-family/serina-blue' },
+                                { id: 'link-3-5', type: 'link', label: 'Blue Flower', href: '/design-family/blue-flower' },
+                                { id: 'link-3-6', type: 'link', label: 'Blue Celico', href: '/design-family/blue-celico' },
+                                { id: 'link-3-7', type: 'link', label: 'Spring Pattern', href: '/design-family/spring-pattern' },
+                            ]
+                        }
+                    ]
+                },
+                { id: 'nav-3', type: 'link', label: 'Packaging', href: '/packaging-video' },
+                { id: 'nav-4', type: 'link', label: 'SALE', href: '/sale' },
+                { id: 'nav-5', type: 'link', label: 'B-Stock', href: '/b-stock' },
+            ]
         },
 
         // ============================================

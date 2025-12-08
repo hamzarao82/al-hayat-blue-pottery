@@ -57,7 +57,7 @@ export default function Gallery() {
 
           {/* Header */}
           <div className="text-center mb-12">
-            <h2 className="text-4xl sm:text-5xl font-serif font-bold text-white mb-4">
+            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
               {gallery.title}
             </h2>
             <p className="text-lg text-blue-100/90 max-w-2xl mx-auto">

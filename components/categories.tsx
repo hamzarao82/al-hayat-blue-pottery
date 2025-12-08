@@ -18,8 +18,9 @@ import Img4 from '@/assets/images/table-decor.png';
 import Img5 from '@/assets/images/karhai.png';
 import Img6 from '@/assets/images/blue-karhai.png';
 import Img7 from '@/assets/images/dinner-set.png';
+import Img8 from '@/assets/images/platters.png';
 
-const fallbackImages = [Img1, Img7, Img6, Img3, null, Img4, Img5, Img2];
+const fallbackImages = [Img1, Img7, Img6, Img3, Img8, Img4, Img5, Img2];
 
 export default function Categories() {
   const { categoriesContent } = useCategoriesData();

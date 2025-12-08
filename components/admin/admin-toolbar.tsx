@@ -178,7 +178,7 @@ export default function AdminToolbar() {
                                     className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
                                     title="Export Data"
                                 >
-                                    <Download size={16} />
+                                    <Upload size={16} />
                                     <span className="hidden md:inline">Export</span>
                                 </button>
 
@@ -188,7 +188,7 @@ export default function AdminToolbar() {
                                     className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors"
                                     title="Import Data"
                                 >
-                                    <Upload size={16} />
+                                    <Download size={16} />
                                     <span className="hidden md:inline">Import</span>
                                 </button>
 

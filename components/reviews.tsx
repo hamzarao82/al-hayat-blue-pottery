@@ -63,10 +63,10 @@ export default function Reviews() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-start mb-12">
             <div className="text-left">
-              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-2">
+              <h2 className="text-4xl sm:text-5xl font-bold text-blue-900 mb-2">
                 {reviewsContent.title}
               </h2>
-              <p className="text-gray-600 text-lg max-w-xl">
+              <p className="text-blue-800/70 text-lg max-w-xl">
                 {reviewsContent.subtitle}
               </p>
             </div>

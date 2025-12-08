@@ -75,10 +75,10 @@ export default function Products() {
       <section className="relative bg-gradient-to-b from-cream to-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-blue mb-3">
-              Our Premium Collection
+            <h2 className="text-4xl sm:text-5xl font-bold text-blue-900 mb-4">
+              Our Premium <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Collection</span>
             </h2>
-            <p className="text-base text-blue/70 max-w-2xl mx-auto">
+            <p className="text-lg text-blue-800/70 max-w-2xl mx-auto">
               Handcrafted blue pottery pieces that bring elegance and tradition to your home
             </p>
           </div>

@@ -10,6 +10,7 @@
 
 import React, { Suspense } from 'react';
 import { CMSProvider } from './cms-context';
+import AdminLayout from '@/components/admin/admin-layout';
 
 interface CMSProviderWrapperProps {
     children: React.ReactNode;
@@ -31,7 +32,9 @@ export function CMSProviderWrapper({ children }: CMSProviderWrapperProps) {
     return (
         <Suspense fallback={<CMSLoadingFallback />}>
             <CMSProvider>
-                {children}
+                <AdminLayout>
+                    {children}
+                </AdminLayout>
             </CMSProvider>
         </Suspense>
     );
