@@ -568,6 +568,7 @@ export function useProductsData() {
     } = useCMS();
     return {
         categories: data.products,
+        isLoading: useCMS().isLoading, // Access loading state directly
         updateProduct,
         addProduct,
         deleteProduct,
@@ -581,6 +582,7 @@ export function useGalleryData() {
     const { data, updateGallery, updateGalleryImage, addGalleryImage, deleteGalleryImage } = useCMS();
     return {
         gallery: data.gallery,
+        isLoading: useCMS().isLoading,
         updateGallery,
         updateGalleryImage,
         addGalleryImage,

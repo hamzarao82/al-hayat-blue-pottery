@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useGalleryData, useAdminMode } from '@/lib/cms';
 import { EditButton, GalleryEditorModal } from '@/components/admin';
+import { GallerySkeleton } from "@/components/gallery-skeleton";
 
 // Fallback images (imported assets)
 import Img from '@/assets/images/memories (3).png';
@@ -21,7 +22,7 @@ import Img6 from '@/assets/images/memories (8).png';
 const fallbackImages = [Img, Img2, Img3, Img4, Img5, Img6];
 
 export default function Gallery() {
-  const { gallery } = useGalleryData();
+  const { gallery, isLoading } = useGalleryData();
   const { isAdmin, isAuthenticated } = useAdminMode();
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
@@ -66,64 +67,67 @@ export default function Gallery() {
           </div>
 
           {/* Gallery Grid */}
-          <div className="grid grid-cols-3 gap-3 md:gap-4">
+          {isLoading ? (
+            <GallerySkeleton />
+          ) : (
+            <div className="grid grid-cols-3 gap-3 md:gap-4">
+              {/* Top Row - 3 images */}
+              {[0, 1, 2].map((index) => {
+                const imageData = getImageForIndex(index);
+                return (
+                  <div
+                    key={index}
+                    className="group relative h-40 md:h-48 rounded-xl overflow-hidden bg-gray-200 shadow-md hover:shadow-xl transition-all duration-300"
+                  >
+                    {imageData.type === 'url' ? (
+                      <img
+                        src={imageData.src}
+                        alt={imageData.alt}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    ) : (
+                      <Image
+                        src={imageData.src || "/placeholder.svg"}
+                        alt={imageData.alt}
+                        fill
+                        sizes="33vw"
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition duration-300" />
+                  </div>
+                );
+              })}
 
-            {/* Top Row - 3 images */}
-            {[0, 1, 2].map((index) => {
-              const imageData = getImageForIndex(index);
-              return (
-                <div
-                  key={index}
-                  className="group relative h-40 md:h-48 rounded-xl overflow-hidden bg-gray-200 shadow-md hover:shadow-xl transition-all duration-300"
-                >
-                  {imageData.type === 'url' ? (
-                    <img
-                      src={imageData.src}
-                      alt={imageData.alt}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  ) : (
-                    <Image
-                      src={imageData.src || "/placeholder.svg"}
-                      alt={imageData.alt}
-                      fill
-                      sizes="33vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition duration-300" />
-                </div>
-              );
-            })}
-
-            {/* Bottom Row - 3 images */}
-            {[3, 4, 5].map((index) => {
-              const imageData = getImageForIndex(index);
-              return (
-                <div
-                  key={index}
-                  className="group relative h-40 md:h-52 rounded-xl overflow-hidden bg-gray-200 shadow-md hover:shadow-xl transition-all duration-300"
-                >
-                  {imageData.type === 'url' ? (
-                    <img
-                      src={imageData.src}
-                      alt={imageData.alt}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  ) : (
-                    <Image
-                      src={imageData.src || "/placeholder.svg"}
-                      alt={imageData.alt}
-                      fill
-                      sizes="33vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition duration-300" />
-                </div>
-              );
-            })}
-          </div>
+              {/* Bottom Row - 3 images */}
+              {[3, 4, 5].map((index) => {
+                const imageData = getImageForIndex(index);
+                return (
+                  <div
+                    key={index}
+                    className="group relative h-40 md:h-52 rounded-xl overflow-hidden bg-gray-200 shadow-md hover:shadow-xl transition-all duration-300"
+                  >
+                    {imageData.type === 'url' ? (
+                      <img
+                        src={imageData.src}
+                        alt={imageData.alt}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    ) : (
+                      <Image
+                        src={imageData.src || "/placeholder.svg"}
+                        alt={imageData.alt}
+                        fill
+                        sizes="33vw"
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition duration-300" />
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
