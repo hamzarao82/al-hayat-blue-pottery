@@ -6,14 +6,21 @@
  */
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Toast from '@/components/toast';
 import ProductCard from './product-card';
 import { useProductsData, useAdminMode, Product } from '@/lib/cms';
-import { EditButton, ProductEditorModal } from '@/components/admin';
+import { EditButton } from '@/components/admin';
 import { Plus, Settings } from 'lucide-react';
+import { Skeleton } from "@/components/ui/skeleton";
+import { ProductSkeleton } from "@/components/product-skeleton";
+
+const ProductEditorModal = dynamic(() => import('@/components/admin/product-editor-modal'), {
+  ssr: false
+});
 
 export default function Products() {
-  const { categories, updateProduct, addProduct, deleteProduct } = useProductsData();
+  const { categories, updateProduct, addProduct, deleteProduct, isLoading } = useProductsData();
   const { isAdmin, isAuthenticated } = useAdminMode();
 
   const [toastData, setToastData] = useState<{ name: string; price: number; image: string } | null>(null);
@@ -75,86 +82,103 @@ export default function Products() {
       <section className="relative bg-gradient-to-b from-cream to-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-blue mb-3">
-              Our Premium Collection
+            <h2 className="text-4xl sm:text-5xl font-bold text-blue-900 mb-4">
+              Our Premium <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Collection</span>
             </h2>
-            <p className="text-base text-blue/70 max-w-2xl mx-auto">
+            <p className="text-lg text-blue-800/70 max-w-2xl mx-auto">
               Handcrafted blue pottery pieces that bring elegance and tradition to your home
             </p>
           </div>
 
           {/* Category Rows */}
           <div className="space-y-12">
-            {categories.map((category) => (
-              <div key={category.id} className="relative space-y-4">
-
-                {/* Admin Add Product Button */}
-                {isAdmin && isAuthenticated && (
-                  <button
-                    onClick={() => handleAddProduct(category.id)}
-                    className="absolute -top-2 right-0 z-20 flex items-center gap-2 px-3 py-1.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors shadow-lg"
-                  >
-                    <Plus size={16} />
-                    Add Product
-                  </button>
-                )}
-
-                {/* Category Header */}
-                <div className="flex items-baseline justify-between">
-                  <div>
-                    <h3 className="text-2xl font-serif font-bold text-blue">
-                      {category.title}
-                    </h3>
-                    <p className="text-sm text-blue/60 mt-1">{category.subtitle}</p>
+            {isLoading ? (
+              // Skeletons
+              [...Array(2)].map((_, i) => (
+                <div key={i} className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="h-4 w-20" />
                   </div>
-                  <button className="text-sm text-caramel hover:text-amber-600 font-medium transition-colors duration-200">
-                    View All →
-                  </button>
-                </div>
-
-                {/* Horizontal Scrolling Products */}
-                <div className="relative overflow-hidden py-4">
-                  <div className="flex gap-6 animate-scroll-seamless">
-                    {/* Duplicate products 4 times for seamless scrolling (25% shift) */}
-                    {[...Array(4)].map((_, setIndex) => (
-                      <div key={setIndex} className="flex gap-6 shrink-0">
-                        {category.products.map((product) => (
-                          <div
-                            key={`${setIndex}-${product.id}`}
-                            className="relative w-72 flex-shrink-0 group"
-                          >
-                            {/* Admin Edit Overlay - Only on first set */}
-                            {setIndex === 0 && isAdmin && isAuthenticated && (
-                              <div className="absolute top-2 right-2 z-30 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEditProduct(category.id, product);
-                                  }}
-                                  className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors"
-                                  title="Edit Product"
-                                >
-                                  <Settings size={14} />
-                                </button>
-                              </div>
-                            )}
-
-                            <ProductCard
-                              product={product}
-                              onAddToCart={() => handleAddToCart(product)}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                  <div className="flex gap-6 overflow-hidden">
+                    {[...Array(4)].map((_, j) => (
+                      <div key={j} className="shrink-0"><ProductSkeleton /></div>
                     ))}
                   </div>
-
-                  {/* Scroll Gradient Indicators */}
-                  <div className="absolute top-0 left-0 bottom-4 w-20 bg-gradient-to-r from-cream to-transparent pointer-events-none z-10"></div>
-                  <div className="absolute top-0 right-0 bottom-4 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"></div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              categories.map((category) => (
+                <div key={category.id} className="relative space-y-4">
+
+                  {/* Admin Add Product Button */}
+                  {isAdmin && isAuthenticated && (
+                    <button
+                      onClick={() => handleAddProduct(category.id)}
+                      className="absolute -top-2 right-0 z-20 flex items-center gap-2 px-3 py-1.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors shadow-lg"
+                    >
+                      <Plus size={16} />
+                      Add Product
+                    </button>
+                  )}
+
+                  {/* Category Header */}
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <h3 className="text-2xl font-serif font-bold text-blue">
+                        {category.title}
+                      </h3>
+                      <p className="text-sm text-blue/60 mt-1">{category.subtitle}</p>
+                    </div>
+                    <button className="text-sm text-caramel hover:text-amber-600 font-medium transition-colors duration-200">
+                      View All →
+                    </button>
+                  </div>
+
+                  {/* Horizontal Scrolling Products */}
+                  <div className="relative overflow-hidden py-4">
+                    <div className="flex gap-6 animate-scroll-seamless">
+                      {/* Duplicate products 4 times for seamless scrolling (25% shift) */}
+                      {[...Array(4)].map((_, setIndex) => (
+                        <div key={setIndex} className="flex gap-6 shrink-0">
+                          {category.products.map((product) => (
+                            <div
+                              key={`${setIndex}-${product.id}`}
+                              className="relative w-72 flex-shrink-0 group"
+                            >
+                              {/* Admin Edit Overlay - Only on first set */}
+                              {setIndex === 0 && isAdmin && isAuthenticated && (
+                                <div className="absolute top-2 right-2 z-30 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEditProduct(category.id, product);
+                                    }}
+                                    className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+                                    title="Edit Product"
+                                  >
+                                    <Settings size={14} />
+                                  </button>
+                                </div>
+                              )}
+
+                              <ProductCard
+                                product={product}
+                                onAddToCart={() => handleAddToCart(product)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Scroll Gradient Indicators */}
+                    <div className="absolute top-0 left-0 bottom-4 w-20 bg-gradient-to-r from-cream to-transparent pointer-events-none z-10"></div>
+                    <div className="absolute top-0 right-0 bottom-4 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"></div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>

@@ -123,10 +123,35 @@ export interface HeritageContent {
 // ============================================
 // Navbar & Footer Types
 // ============================================
+// Navbar Types
+export interface NavLink {
+    id: string;
+    type: 'link';
+    label: string;
+    href: string;
+}
+
+export interface NavGroup {
+    id: string;
+    type: 'group'; // e.g. "Tableware" inside Products
+    label: string;
+    items: NavLink[];
+}
+
+export interface NavDropdown {
+    id: string;
+    type: 'dropdown'; // e.g. "Products"
+    label: string;
+    groups: NavGroup[]; // Columns/Sections
+}
+
+export type NavbarItem = NavLink | NavDropdown;
+
 export interface NavbarContent {
     topBannerLeft: string;
     topBannerRight: string;
     logo: string;
+    items: NavbarItem[];
 }
 
 export interface SocialLink {

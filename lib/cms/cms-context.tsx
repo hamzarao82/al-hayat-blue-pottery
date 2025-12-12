@@ -568,6 +568,7 @@ export function useProductsData() {
     } = useCMS();
     return {
         categories: data.products,
+        isLoading: useCMS().isLoading, // Access loading state directly
         updateProduct,
         addProduct,
         deleteProduct,
@@ -581,6 +582,7 @@ export function useGalleryData() {
     const { data, updateGallery, updateGalleryImage, addGalleryImage, deleteGalleryImage } = useCMS();
     return {
         gallery: data.gallery,
+        isLoading: useCMS().isLoading,
         updateGallery,
         updateGalleryImage,
         addGalleryImage,
@@ -610,8 +612,19 @@ export function useReviewsData() {
 
 export function useNavbarData() {
     const { data, updateNavbar } = useCMS();
+
+    // Memoize the derived navbar data to prevent infinite loops in consumers
+    const navbar = useMemo(() => {
+        const initialNavbar = getInitialData().navbar;
+        return {
+            ...initialNavbar,
+            ...(data.navbar || {}),
+            items: data.navbar?.items?.length ? data.navbar.items : initialNavbar.items
+        };
+    }, [data.navbar]);
+
     return {
-        navbar: data.navbar || getInitialData().navbar,
+        navbar,
         updateNavbar,
     };
 }

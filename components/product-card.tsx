@@ -1,11 +1,13 @@
 'use client';
 
-import { ShoppingCart, Share2, Eye } from 'lucide-react';
+import { ShoppingCart, Share2, Eye, Edit } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import Toast from './toast';
 import QuickViewModal from './quick-view-modal';
+import { useAdminMode } from '@/lib/cms';
+import ProductEditorModal from './admin/product-editor-modal';
 
 interface Product {
   id: string | number;
@@ -18,11 +20,14 @@ interface Product {
 interface ProductCardProps {
   product: Product;
   onAddToCart?: () => void;
+  categoryId?: string; // Optional: needed for CMS editing
 }
 
-export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
+export default function ProductCard({ product, onAddToCart, categoryId }: ProductCardProps) {
+  const { isAdmin, isAuthenticated } = useAdminMode();
   const [showToast, setShowToast] = useState(false);
   const [showQuickView, setShowQuickView] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
   const [cartButtonState, setCartButtonState] = useState<'idle' | 'quantity' | 'loading' | 'success'>('idle');
   const [quantity, setQuantity] = useState(1);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -77,13 +82,39 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
     }, 2000);
   };
 
+  // Convert generic product to CMS product type if needed
+  const cmsProduct = {
+    ...product,
+    id: String(product.id),
+    categoryId: categoryId || 'uncategorized'
+  };
+
   return (
     <>
       <div
-        className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full group"
+        className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full group relative"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+
+        {/* Admin Edit Button */}
+        {isAdmin && isAuthenticated && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (!categoryId) {
+                alert("This product is not linked to a CMS category yet. Editing is disabled.");
+                return;
+              }
+              setShowEditor(true);
+            }}
+            className="absolute top-3 left-3 z-20 p-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 hover:scale-110 transition-all duration-200"
+            title="Edit Product"
+          >
+            <Edit size={16} />
+          </button>
+        )}
 
         {/* Image Section */}
         <Link href={`/products/${product.id}`} className="block relative overflow-hidden">
@@ -206,6 +237,16 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
         onClose={() => setShowQuickView(false)}
         onAddToCart={handleQuickViewAddToCart}
       />
+
+      {/* Admin Product Editor */}
+      {isAdmin && isAuthenticated && categoryId && (
+        <ProductEditorModal
+          isOpen={showEditor}
+          onClose={() => setShowEditor(false)}
+          product={cmsProduct}
+          categoryId={categoryId}
+        />
+      )}
 
       {showToast && mounted && createPortal(
         <Toast

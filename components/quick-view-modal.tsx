@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { FaWhatsapp, FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaPinterestP } from 'react-icons/fa';
 
 interface Product {
-    id: number;
+    id: number | string;
     name: string;
     price: number;
     discount: number;
